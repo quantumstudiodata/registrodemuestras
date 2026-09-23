@@ -73,8 +73,14 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
 .card-title{padding:12px 18px;border-bottom:1px solid var(--border);font-size:12.5px;font-weight:600;display:flex;align-items:center;justify-content:space-between;gap:6px;color:var(--text)}
 .card-body{padding:18px}
 .scan-row{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
-.scan-field{flex:1;min-width:180px}
-.scan-field.short{flex:0 0 200px}
+.scan-field{flex:0 0 240px}
+.scan-field.short{flex:0 0 110px}
+.excel-toggle-row{display:flex;align-items:center;justify-content:space-between;margin-top:10px;gap:10px}
+.excel-toggle-btn{display:flex;align-items:center;gap:6px;padding:7px 12px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--t2);font-family:'Archivo',sans-serif;font-size:11.5px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.excel-toggle-btn:hover{background:rgba(255,255,255,.06);color:var(--text)}
+.excel-toggle-btn svg.chev{transition:transform .15s}
+.excel-toggle-btn.open svg.chev{transform:rotate(90deg)}
+.excel-collapse{max-width:320px;margin-top:12px}
 .pdf-zone{border:2px dashed var(--border);border-radius:12px;padding:.9rem;text-align:center;cursor:pointer;transition:all .15s;background:rgba(0,0,0,.22);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:72px;gap:4px;max-width:320px}
 .pdf-zone:hover,.pdf-zone.drag{border-color:var(--border2);background:rgba(255,255,255,.05)}
 .pdf-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
@@ -181,7 +187,11 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
 .login-orb.o1{top:-100px;left:10%;width:420px;height:420px;opacity:.05}
 .login-orb.o2{bottom:-140px;right:8%;width:360px;height:360px;opacity:.035;animation-delay:-9s}
 @keyframes orbfloat{0%,100%{transform:translate(0,0)}50%{transform:translate(24px,-18px)}}
-.login-glyph{position:relative;opacity:.5}
+.login-glyph{position:relative}
+.login-glyph .arc{transform-box:fill-box;transform-origin:center}
+@keyframes loginSpin1{to{transform:rotate(360deg)}}
+@keyframes loginSpin2{to{transform:rotate(-360deg)}}
+@keyframes loginSpin3{to{transform:rotate(360deg)}}
 .login-brand{position:absolute;top:28px;left:28px;display:flex;align-items:center;gap:8px}
 .login-brand span{color:var(--text);font-size:13px;font-weight:600}
 .login-form-col{flex:1;background:var(--bg2);display:flex;align-items:center;justify-content:center;padding:20px}
@@ -260,7 +270,12 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
       <div class="login-brand">
         <span>Registro de muestras</span>
       </div>
-      <svg class="login-glyph" width="88" height="88" viewBox="0 0 24 24" fill="none" stroke="#f7f7f8" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v6.5L4 18a2 2 0 0 0 1.8 3h12.4a2 2 0 0 0 1.8-3l-5-9.5V2"></path><line x1="8" y1="2" x2="16" y2="2"></line><line x1="7" y1="14" x2="17" y2="14"></line></svg>
+      <svg class="login-glyph" width="180" height="180" viewBox="0 0 150 150">
+        <circle class="arc" cx="75" cy="75" r="64" fill="none" stroke="rgba(247,247,248,.85)" stroke-width="1.4" stroke-linecap="round" stroke-dasharray="70 330" style="animation:loginSpin1 9s linear infinite;"></circle>
+        <circle class="arc" cx="75" cy="75" r="46" fill="none" stroke="rgba(247,247,248,.55)" stroke-width="1.4" stroke-linecap="round" stroke-dasharray="50 240" style="animation:loginSpin2 13s linear infinite;"></circle>
+        <circle class="arc" cx="75" cy="75" r="28" fill="none" stroke="rgba(247,247,248,.35)" stroke-width="1.4" stroke-linecap="round" stroke-dasharray="35 150" style="animation:loginSpin3 18s linear infinite;"></circle>
+        <circle cx="75" cy="75" r="2.5" fill="#f7f7f8"></circle>
+      </svg>
     </div>
     <div class="login-form-col">
       <div class="login-form-inner">
@@ -347,10 +362,16 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
             </div>
             <button class="btn-add" id="btn-add" onclick="agregarMuestra()" disabled>＋ Registrar</button>
           </div>
-          <div class="hint">Escanea → Enter para registrar</div>
+          <div class="excel-toggle-row">
+            <div class="hint" style="margin-top:0">Escanea → Enter para registrar</div>
+            <button type="button" class="excel-toggle-btn" id="excel-toggle-btn" onclick="toggleExcelZone()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+              Cargar Excel del turno
+              <svg class="chev" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+          </div>
 
-          <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:14px">
-            <label class="lbl">Excel .xls .xlsx (al final del turno)</label>
+          <div class="excel-collapse" id="excel-collapse" style="display:none">
             <label class="pdf-zone" id="pdf-zone"
               ondragover="event.preventDefault();this.classList.add('drag')"
               ondragleave="this.classList.remove('drag')"
@@ -359,7 +380,7 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
               <div class="pdf-zone-txt">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--sub)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
                 <strong>Click o arrastra el Excel</strong>
-                <span>Asigna pruebas a los códigos del día</span>
+                <span>.xls / .xlsx — asigna pruebas a los códigos del día</span>
               </div>
             </label>
             <div class="pdf-status" id="pdf-status"></div>
@@ -629,6 +650,14 @@ function toast(msg,tipo){
   var t=document.getElementById('toast');
   t.textContent=msg; t.className='toast'+(tipo?' '+tipo:''); t.style.display='block';
   clearTimeout(toastTimer); toastTimer=setTimeout(function(){t.style.display='none';},3500);
+}
+
+function toggleExcelZone(){
+  var box=document.getElementById('excel-collapse');
+  var btn=document.getElementById('excel-toggle-btn');
+  var open=box.style.display!=='none';
+  box.style.display=open?'none':'block';
+  btn.classList.toggle('open',!open);
 }
 
 function copiarValor(id){
