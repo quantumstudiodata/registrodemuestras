@@ -76,7 +76,7 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
 .card{background:var(--card);backdrop-filter:blur(14px);border:1px solid var(--border);border-radius:16px;overflow:hidden}
 .card-title{padding:12px 18px;border-bottom:1px solid var(--border);font-size:12.5px;font-weight:600;display:flex;align-items:center;justify-content:space-between;gap:6px;color:var(--text)}
 .card-body{padding:18px}
-.scan-row{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
+.scan-row{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
 .scan-field{flex:0 0 240px}
 .scan-field.short{flex:0 0 110px}
 .pdf-zone{border:2px dashed var(--border);border-radius:12px;padding:8px 12px;text-align:center;cursor:pointer;transition:all .15s;background:rgba(0,0,0,.22);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;flex:0 0 230px;max-width:230px}
@@ -357,7 +357,10 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
               <input class="analista-in" type="text" id="inp-analista" placeholder="Iniciales"
                 onkeydown="if(event.key==='Enter') agregarMuestra()">
             </div>
-            <button class="btn-add" id="btn-add" onclick="agregarMuestra()" disabled>＋ Registrar</button>
+            <div class="scan-field" style="flex:0 0 auto">
+              <label class="lbl" style="visibility:hidden">＋</label>
+              <button class="btn-add" id="btn-add" onclick="agregarMuestra()" disabled>＋ Registrar</button>
+            </div>
 
             <label class="pdf-zone" id="pdf-zone"
               ondragover="event.preventDefault();this.classList.add('drag')"
@@ -1761,14 +1764,20 @@ function diaAnterior(fechaStr){
   return d.getUTCFullYear()+'-'+String(d.getUTCMonth()+1).padStart(2,'0')+'-'+String(d.getUTCDate()).padStart(2,'0');
 }
 
-function formatComparacionDia(actual,anterior){
+function getHoraActual(){
+  var d=new Date(new Date().getTime()+(-6*60*60*1000));
+  return String(d.getUTCHours()).padStart(2,'0')+':'+String(d.getUTCMinutes()).padStart(2,'0')+':'+String(d.getUTCSeconds()).padStart(2,'0');
+}
+
+function formatComparacionDia(actual,anterior,mismaHora){
+  var ref=mismaHora?'misma hora de ayer':'día anterior';
   if(anterior===0){
-    if(actual===0) return 'Sin cambios vs. día anterior';
-    return 'Sin datos del día anterior';
+    if(actual===0) return 'Sin cambios vs. '+ref;
+    return 'Sin datos de '+ref;
   }
   var pct=Math.round(((actual-anterior)/anterior)*100);
-  if(pct===0) return 'Igual que el día anterior';
-  return (pct>0?'+':'')+pct+'% vs. día anterior';
+  if(pct===0) return 'Igual que '+ref;
+  return (pct>0?'+':'')+pct+'% vs. '+ref;
 }
 
 function renderStatsHoy(){
@@ -1792,16 +1801,22 @@ function renderStatsHoy(){
   var elPruebas=document.getElementById('stat-pruebas-num');
   if(elPruebas) elPruebas.textContent=pruebasHoy;
 
-  var listaAnt=REGISTRO.filter(function(m){return m.fecha===diaAnterior(hoy);});
+  var esHoyReal=(hoy===getFechaHoy());
+  var horaLimite=esHoyReal?getHoraActual():null;
+  var listaAnt=REGISTRO.filter(function(m){
+    if(m.fecha!==diaAnterior(hoy)) return false;
+    if(horaLimite&&(m.hora||'00:00:00')>horaLimite) return false;
+    return true;
+  });
   var muestrasAnt=contarMuestrasUnicas(listaAnt);
   var countsAnt=calcStatsFromList(listaAnt);
   var pruebasAnt=0;
   Object.keys(countsAnt).forEach(function(k){pruebasAnt+=countsAnt[k];});
 
   var capMuestras=document.getElementById('stat-muestras-caption');
-  if(capMuestras) capMuestras.textContent=formatComparacionDia(muestrasHoy,muestrasAnt);
+  if(capMuestras) capMuestras.textContent=formatComparacionDia(muestrasHoy,muestrasAnt,esHoyReal);
   var capPruebas=document.getElementById('stat-pruebas-caption');
-  if(capPruebas) capPruebas.textContent=formatComparacionDia(pruebasHoy,pruebasAnt);
+  if(capPruebas) capPruebas.textContent=formatComparacionDia(pruebasHoy,pruebasAnt,esHoyReal);
 }
 
 function renderStatsMes(){
