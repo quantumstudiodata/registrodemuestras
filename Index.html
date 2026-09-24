@@ -101,7 +101,6 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
 .btn-sm:hover{border-color:var(--border2);color:var(--text);background:rgba(255,255,255,.08)}
 .list-header{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:5px}
 .list-header h2{font-size:12.5px;font-weight:600;color:var(--text)}
-.list-actions{display:flex;gap:4px;flex-wrap:wrap}
 #list-body{max-height:520px;overflow-y:auto}
 .muestra-item{border-bottom:1px solid rgba(255,255,255,.07);padding:9px 18px;transition:background .1s}
 .muestra-item:last-child{border-bottom:none}
@@ -382,9 +381,6 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
       <div class="card">
         <div class="list-header">
           <h2 id="list-title">Códigos del día (0)</h2>
-          <div class="list-actions">
-            <button class="btn-sm" onclick="confirmarLimpiar()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>Limpiar día</button>
-          </div>
         </div>
         <div id="list-body"><div style="padding:2rem;text-align:center"><div class="spinner"></div></div></div>
       </div>
@@ -1690,14 +1686,6 @@ function toggleDup(e,id){
 }
 
 
-
-function confirmarLimpiar(){
-  var hoy=getFechaHoy();
-  MUESTRAS_HOY=[];
-  REGISTRO=REGISTRO.filter(function(m){return m.fecha!==hoy;});
-  guardarLocal(); renderLista();
-  toast('Limpiado','ok');
-}
 
 function switchStatTab(tab,btn){
   document.querySelectorAll('.stats-tab').forEach(function(b){b.classList.remove('on');});
