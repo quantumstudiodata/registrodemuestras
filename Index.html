@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0c0c0d">
+<meta name="color-scheme" content="dark">
 <title>Lab — Registro de Muestras</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
@@ -13,7 +15,7 @@
   --border:rgba(255,255,255,.16);--border2:rgba(255,255,255,.22);
   --card:rgba(255,255,255,.045);
   --fail:#f87171;--fail-bg:rgba(248,113,113,.12);--fail-border:rgba(248,113,113,.35);
-  --acc:#C9BFFA;--acc-bg:rgba(201,191,250,.14);--acc-border:rgba(201,191,250,.38);--acc-glow:rgba(201,191,250,.35);
+  --acc:#AD97F7;--acc-bg:rgba(173,151,247,.16);--acc-border:rgba(173,151,247,.42);--acc-glow:rgba(173,151,247,.4);--acc-ink:#211735;
 }
 body.dark{
   --bg1:#1c1c1e;--bg2:#131314;--bg3:#0c0c0d;
@@ -21,7 +23,7 @@ body.dark{
   --border:rgba(255,255,255,.16);--border2:rgba(255,255,255,.22);
   --card:rgba(255,255,255,.045);
   --fail:#f87171;--fail-bg:rgba(248,113,113,.12);--fail-border:rgba(248,113,113,.35);
-  --acc:#C9BFFA;--acc-bg:rgba(201,191,250,.14);--acc-border:rgba(201,191,250,.38);--acc-glow:rgba(201,191,250,.35);
+  --acc:#AD97F7;--acc-bg:rgba(173,151,247,.16);--acc-border:rgba(173,151,247,.42);--acc-glow:rgba(173,151,247,.4);--acc-ink:#211735;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{
@@ -77,11 +79,6 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
 .scan-row{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
 .scan-field{flex:0 0 240px}
 .scan-field.short{flex:0 0 110px}
-.excel-toggle-row{display:flex;align-items:center;justify-content:space-between;margin-top:10px;gap:10px}
-.excel-toggle-btn{display:flex;align-items:center;gap:6px;padding:7px 12px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--t2);font-family:'Archivo',sans-serif;font-size:11.5px;cursor:pointer;transition:all .15s;white-space:nowrap}
-.excel-toggle-btn:hover{background:rgba(255,255,255,.06);color:var(--text)}
-.excel-toggle-btn svg.chev{transition:transform .15s}
-.excel-toggle-btn.open svg.chev{transform:rotate(90deg)}
 .excel-collapse{max-width:320px;margin-top:12px}
 .pdf-zone{border:2px dashed var(--border);border-radius:12px;padding:.9rem;text-align:center;cursor:pointer;transition:all .15s;background:rgba(0,0,0,.22);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:72px;gap:4px;max-width:320px}
 .pdf-zone:hover,.pdf-zone.drag{border-color:var(--border2);background:rgba(255,255,255,.05)}
@@ -89,10 +86,10 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
 .pdf-zone-txt{font-size:11px;color:var(--sub);line-height:1.6;pointer-events:none}
 .pdf-zone-txt strong{color:var(--text);display:block;font-size:12px;margin-bottom:2px}
 .scan-input{width:100%;padding:12px 13px;border:1px solid var(--border);border-radius:10px;font-family:'IBM Plex Mono',monospace;font-size:16px;background:rgba(0,0,0,.32);color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s;letter-spacing:.04em}
-.scan-input:focus{border-color:#ffffff;box-shadow:0 0 0 3px rgba(255,255,255,.1)}
+.scan-input:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-bg)}
 .lbl{font-size:10px;color:var(--t4);margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.5px}
 .analista-in{width:100%;padding:11px 12px;border:1px solid var(--border);border-radius:10px;font-family:'Archivo',sans-serif;font-size:13px;background:rgba(0,0,0,.32);color:var(--text);outline:none}
-.analista-in:focus{border-color:#ffffff;box-shadow:0 0 0 3px rgba(255,255,255,.1)}
+.analista-in:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-bg)}
 .btn-add{padding:12px 20px;background:#ffffff;color:#0c0c0d;border:none;border-radius:10px;font-family:'Archivo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:transform .15s,box-shadow .15s;white-space:nowrap}
 .btn-add:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(255,255,255,.18)}
 .btn-add:disabled{opacity:.35;cursor:default;transform:none;box-shadow:none}
@@ -115,7 +112,7 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
 .m-analista{font-size:9.5px;color:var(--acc);background:var(--acc-bg);padding:2px 8px;border-radius:20px;border:1px solid var(--acc-border)}
 .m-suc{font-size:9.5px;color:var(--acc);background:var(--acc-bg);padding:2px 8px;border-radius:20px;border:1px solid var(--acc-border)}
 .suc-alerta{color:var(--fail)!important;font-weight:700}
-.m-dup{background:var(--acc);color:#241b42;border-radius:10px;padding:0 6px;font-size:9px;font-weight:700;cursor:pointer;margin-left:4px;display:inline-block}
+.m-dup{background:var(--acc);color:var(--acc-ink);border-radius:10px;padding:0 6px;font-size:9px;font-weight:700;cursor:pointer;margin-left:4px;display:inline-block}
 .m-dup-list{margin-top:6px;padding-top:6px;border-top:1px dashed var(--border);display:flex;flex-direction:column;gap:3px}
 .m-dup-item{display:flex;align-items:center;gap:8px;font-size:10px;color:var(--sub);font-family:'IBM Plex Mono',monospace}
 .btn-del-m{background:none;border:none;color:var(--t4);cursor:pointer;font-size:12px;padding:2px 3px;border-radius:4px;transition:color .12s}
@@ -163,14 +160,14 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
 /* Registro / Anteriores */
 .registro-filters{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
 .reg-input{padding:8px 11px;border:1px solid var(--border);border-radius:9px;font-family:'Archivo',sans-serif;font-size:12px;background:rgba(0,0,0,.32);color:var(--text);outline:none}
-.reg-input:focus{border-color:#ffffff}
+.reg-input:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-bg)}
 .reg-table{width:100%;border-collapse:collapse;font-size:11.5px}
-.reg-table th{background:rgba(255,255,255,.06);color:var(--t2);padding:8px 12px;text-align:left;font-size:10px;font-weight:600;white-space:nowrap;text-transform:uppercase;letter-spacing:.4px}
+.reg-table th{background:#161618f2;color:var(--t2);padding:8px 12px;text-align:left;font-size:10px;font-weight:600;white-space:nowrap;text-transform:uppercase;letter-spacing:.4px;position:sticky;top:0;z-index:1}
 .reg-table td{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.06);vertical-align:middle;color:var(--text)}
 .reg-table tr:hover td{background:rgba(255,255,255,.03)}
 .reg-table td:first-child{font-family:'IBM Plex Mono',monospace;font-size:11.5px}
 .reg-empty{padding:2.5rem;text-align:center;color:var(--sub);font-size:12px}
-.reg-wrap{overflow-x:auto;border-radius:14px;border:1px solid var(--border);background:var(--card);backdrop-filter:blur(14px)}
+.reg-wrap{overflow-x:auto;overflow-y:auto;max-height:520px;border-radius:14px;border:1px solid var(--border);background:var(--card);backdrop-filter:blur(14px)}
 .rechazada-badge{background:var(--fail-bg);border:1px solid var(--fail-border);color:var(--fail);padding:2px 9px;border-radius:12px;font-weight:700;font-size:10px;display:inline-block}
 .rechazada-razon-inline{font-size:10px;color:var(--sub)}
 
@@ -225,7 +222,7 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
 .dropdown-editar{min-width:230px}
 .edit-codigo-box{padding:6px 13px 10px}
 .edit-codigo-input{width:100%;padding:7px 9px;border:1px solid var(--border);border-radius:7px;background:rgba(0,0,0,.32);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:11px;margin-bottom:6px;box-sizing:border-box}
-.edit-codigo-input:focus{border-color:#ffffff;outline:none}
+.edit-codigo-input:focus{border-color:var(--acc);outline:none;box-shadow:0 0 0 3px var(--acc-bg)}
 .edit-prueba-item{display:flex;align-items:center;justify-content:space-between;padding:5px 13px;font-size:11px;color:var(--text)}
 .edit-prueba-item .btn-del-m{color:var(--fail);opacity:.7}
 .edit-prueba-item .btn-del-m:hover{opacity:1}
@@ -241,7 +238,7 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
 .modal-foto-preview img{width:100%;height:100%;object-fit:cover}
 .muro-caja{display:flex;gap:8px;margin-bottom:1.25rem;align-items:flex-end}
 .muro-textarea{flex:1;padding:10px 12px;border:1px solid var(--border);border-radius:10px;font-family:'Archivo',sans-serif;font-size:12.5px;background:rgba(0,0,0,.32);color:var(--text);outline:none;resize:vertical}
-.muro-textarea:focus{border-color:#ffffff}
+.muro-textarea:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-bg)}
 .muro-lista{display:flex;flex-direction:column;gap:10px;max-width:600px}
 .muro-item{background:var(--card);backdrop-filter:blur(14px);border:1px solid var(--border);border-radius:14px;padding:13px 15px}
 .muro-item-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
@@ -364,16 +361,9 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
             </div>
             <button class="btn-add" id="btn-add" onclick="agregarMuestra()" disabled>＋ Registrar</button>
           </div>
-          <div class="excel-toggle-row">
-            <div class="hint" style="margin-top:0">Escanea → Enter para registrar</div>
-            <button type="button" class="excel-toggle-btn" id="excel-toggle-btn" onclick="toggleExcelZone()">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-              Cargar Excel del turno
-              <svg class="chev" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-            </button>
-          </div>
+          <div class="hint">Escanea → Enter para registrar</div>
 
-          <div class="excel-collapse" id="excel-collapse" style="display:none">
+          <div class="excel-collapse">
             <label class="pdf-zone" id="pdf-zone"
               ondragover="event.preventDefault();this.classList.add('drag')"
               ondragleave="this.classList.remove('drag')"
@@ -423,7 +413,7 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
           <div class="kpi-body">
             <div class="kpi-label">Cantidad de muestras</div>
             <div class="kpi-num rd-mono" id="stat-muestras-num">0</div>
-            <div class="kpi-caption">Actualizado en vivo</div>
+            <div class="kpi-caption" id="stat-muestras-caption">—</div>
           </div>
           <button class="kpi-copy" onclick="copiarValor('stat-muestras-num')" aria-label="Copiar cantidad de muestras" title="Copiar">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="8" y="8" width="12" height="12" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg>
@@ -434,7 +424,7 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
           <div class="kpi-body">
             <div class="kpi-label">Cantidad de pruebas</div>
             <div class="kpi-num rd-mono" id="stat-pruebas-num">0</div>
-            <div class="kpi-caption">Actualizado en vivo</div>
+            <div class="kpi-caption" id="stat-pruebas-caption">—</div>
           </div>
           <button class="kpi-copy" onclick="copiarValor('stat-pruebas-num')" aria-label="Copiar cantidad de pruebas" title="Copiar">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="8" y="8" width="12" height="12" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg>
@@ -652,14 +642,6 @@ function toast(msg,tipo){
   var t=document.getElementById('toast');
   t.textContent=msg; t.className='toast'+(tipo?' '+tipo:''); t.style.display='block';
   clearTimeout(toastTimer); toastTimer=setTimeout(function(){t.style.display='none';},3500);
-}
-
-function toggleExcelZone(){
-  var box=document.getElementById('excel-collapse');
-  var btn=document.getElementById('excel-toggle-btn');
-  var open=box.style.display!=='none';
-  box.style.display=open?'none':'block';
-  btn.classList.toggle('open',!open);
 }
 
 function copiarValor(id){
@@ -1251,6 +1233,7 @@ function eliminarPruebaFila(rowId,fecha,refId){
   });
 }
 function posicionarDropdown(btn, menu){
+  document.body.appendChild(menu);
   var r=btn.getBoundingClientRect();
   menu.style.position='fixed';
   menu.style.right='auto';
@@ -1786,6 +1769,23 @@ function contarMuestrasUnicas(lista){
   });
   return sueltos+grupos;
 }
+function diaAnterior(fechaStr){
+  var p=fechaStr.split('-').map(Number);
+  var d=new Date(Date.UTC(p[0],p[1]-1,p[2]));
+  d.setUTCDate(d.getUTCDate()-1);
+  return d.getUTCFullYear()+'-'+String(d.getUTCMonth()+1).padStart(2,'0')+'-'+String(d.getUTCDate()).padStart(2,'0');
+}
+
+function formatComparacionDia(actual,anterior){
+  if(anterior===0){
+    if(actual===0) return 'Sin cambios vs. día anterior';
+    return 'Sin datos del día anterior';
+  }
+  var pct=Math.round(((actual-anterior)/anterior)*100);
+  if(pct===0) return 'Igual que el día anterior';
+  return (pct>0?'+':'')+pct+'% vs. día anterior';
+}
+
 function renderStatsHoy(){
   var sel=document.getElementById('stat-fecha');
   var hoy=sel&&sel.value?sel.value:getFechaHoy();
@@ -1797,15 +1797,26 @@ function renderStatsHoy(){
   renderStatsListSimple('stats-tarde',calcStatsFromList(tarde));
   renderStatsListSimple('stats-dia',calcStatsFromList(lista));
 
+  var muestrasHoy=contarMuestrasUnicas(lista);
+  var countsDia=calcStatsFromList(lista);
+  var pruebasHoy=0;
+  Object.keys(countsDia).forEach(function(k){pruebasHoy+=countsDia[k];});
+
   var elMuestras=document.getElementById('stat-muestras-num');
-  if(elMuestras) elMuestras.textContent=contarMuestrasUnicas(lista);
+  if(elMuestras) elMuestras.textContent=muestrasHoy;
   var elPruebas=document.getElementById('stat-pruebas-num');
-  if(elPruebas){
-    var countsDia=calcStatsFromList(lista);
-    var totalP=0;
-    Object.keys(countsDia).forEach(function(k){totalP+=countsDia[k];});
-    elPruebas.textContent=totalP;
-  }
+  if(elPruebas) elPruebas.textContent=pruebasHoy;
+
+  var listaAnt=REGISTRO.filter(function(m){return m.fecha===diaAnterior(hoy);});
+  var muestrasAnt=contarMuestrasUnicas(listaAnt);
+  var countsAnt=calcStatsFromList(listaAnt);
+  var pruebasAnt=0;
+  Object.keys(countsAnt).forEach(function(k){pruebasAnt+=countsAnt[k];});
+
+  var capMuestras=document.getElementById('stat-muestras-caption');
+  if(capMuestras) capMuestras.textContent=formatComparacionDia(muestrasHoy,muestrasAnt);
+  var capPruebas=document.getElementById('stat-pruebas-caption');
+  if(capPruebas) capPruebas.textContent=formatComparacionDia(pruebasHoy,pruebasAnt);
 }
 
 function renderStatsMes(){
