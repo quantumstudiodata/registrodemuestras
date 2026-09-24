@@ -79,8 +79,7 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
 .scan-row{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
 .scan-field{flex:0 0 240px}
 .scan-field.short{flex:0 0 110px}
-.excel-collapse{max-width:320px;margin-top:12px}
-.pdf-zone{border:2px dashed var(--border);border-radius:12px;padding:.9rem;text-align:center;cursor:pointer;transition:all .15s;background:rgba(0,0,0,.22);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:72px;gap:4px;max-width:320px}
+.pdf-zone{border:2px dashed var(--border);border-radius:12px;padding:8px 12px;text-align:center;cursor:pointer;transition:all .15s;background:rgba(0,0,0,.22);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;flex:0 0 230px;max-width:230px}
 .pdf-zone:hover,.pdf-zone.drag{border-color:var(--border2);background:rgba(255,255,255,.05)}
 .pdf-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 .pdf-zone-txt{font-size:11px;color:var(--sub);line-height:1.6;pointer-events:none}
@@ -359,10 +358,7 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
                 onkeydown="if(event.key==='Enter') agregarMuestra()">
             </div>
             <button class="btn-add" id="btn-add" onclick="agregarMuestra()" disabled>＋ Registrar</button>
-          </div>
-          <div class="hint">Escanea → Enter para registrar</div>
 
-          <div class="excel-collapse">
             <label class="pdf-zone" id="pdf-zone"
               ondragover="event.preventDefault();this.classList.add('drag')"
               ondragleave="this.classList.remove('drag')"
@@ -374,8 +370,9 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
                 <span>.xls / .xlsx — asigna pruebas a los códigos del día</span>
               </div>
             </label>
-            <div class="pdf-status" id="pdf-status"></div>
           </div>
+          <div class="hint">Escanea → Enter para registrar</div>
+          <div class="pdf-status" id="pdf-status"></div>
         </div>
       </div>
       <div class="card">
