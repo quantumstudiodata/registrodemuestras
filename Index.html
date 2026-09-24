@@ -79,7 +79,7 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
 .scan-row{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
 .scan-field{flex:0 0 240px}
 .scan-field.short{flex:0 0 110px}
-.pdf-zone{border:2px dashed var(--border);border-radius:12px;padding:8px 12px;text-align:center;cursor:pointer;transition:all .15s;background:rgba(0,0,0,.22);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;flex:0 0 230px;max-width:230px}
+.pdf-zone{border:2px dashed var(--border);border-radius:12px;padding:8px 12px;text-align:center;cursor:pointer;transition:all .15s;background:rgba(0,0,0,.22);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;flex:0 0 230px;max-width:230px;margin-left:auto}
 .pdf-zone:hover,.pdf-zone.drag{border-color:var(--border2);background:rgba(255,255,255,.05)}
 .pdf-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 .pdf-zone-txt{font-size:11px;color:var(--sub);line-height:1.6;pointer-events:none}
@@ -463,14 +463,13 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
     <div class="registro-filters">
       <input class="reg-input" type="text" id="reg-codigo" placeholder="Buscar código…" oninput="renderRegistro()">
       <input class="reg-input" type="date" id="reg-fecha" onchange="renderRegistro()">
-      <input class="reg-input" type="text" id="reg-analista" placeholder="Analista…" oninput="renderRegistro()">
       <select class="reg-input" id="reg-prueba" onchange="renderRegistro()">
         <option value="">Todas las pruebas</option>
         <option value="__sin__">Sin prueba asignada</option>
         <option value="__rechazadas__">Rechazadas</option>
       </select>
+      <input class="reg-input" type="text" id="reg-sucursal" placeholder="Sucursal…" oninput="renderRegistro()">
       <button class="btn-sm" onclick="limpiarFiltrosReg()">Limpiar</button>
-      <button class="btn-sm" id="btn-cargar-historial" onclick="cargarHistorialRegistro()" style="border-color:var(--border2);color:var(--text)">Cargar meses anteriores</button>
     </div>
     <div class="reg-wrap">
       <table class="reg-table">
@@ -491,7 +490,6 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
       <input type="date" id="ant-fecha" class="reg-input" onchange="renderAnteriores()">
       <button class="btn-sm" onclick="document.getElementById('ant-fecha').value=getFechaHoy();renderAnteriores()">Hoy</button>
       <button class="btn-sm" onclick="generarPDFAnteriores()" style="border-color:var(--border2);color:var(--text)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>PDF</button>
-      <button class="btn-sm" id="btn-cargar-historial-ant" onclick="cargarHistorialAnteriores()" style="border-color:var(--border2);color:var(--text)">Cargar meses anteriores</button>
     </div>
     <div style="max-width:820px" id="ant-container">
       <div id="ant-empty" class="reg-empty" style="display:none">Sin códigos anteriores para este día.</div>
@@ -860,25 +858,6 @@ function asegurarHistorialCompleto(cb){
     cb();
   });
 }
-function cargarHistorialRegistro(){
-  var btn=document.getElementById('btn-cargar-historial');
-  if(btn) btn.textContent='Cargando…';
-  asegurarHistorialCompleto(function(){
-    renderRegistro();
-    toast('Historial completo cargado','ok');
-    if(btn) btn.style.display='none';
-  });
-}
-function cargarHistorialAnteriores(){
-  var btn=document.getElementById('btn-cargar-historial-ant');
-  if(btn) btn.textContent='Cargando…';
-  asegurarHistorialCompleto(function(){
-    renderAnteriores();
-    toast('Historial completo cargado','ok');
-    if(btn) btn.style.display='none';
-  });
-}
-
 function guardarLocal(){
   try{sessionStorage.setItem('lab_hoy_'+getFechaHoy(),JSON.stringify(MUESTRAS_HOY));}catch(e){}
 }
@@ -1886,11 +1865,9 @@ function copiarStatsDia(){
 }
 
 function renderRegistro(){
-  var btnHist=document.getElementById('btn-cargar-historial');
-  if(btnHist) btnHist.style.display=HISTORIAL_COMPLETO?'none':'inline-block';
   var fc=document.getElementById('reg-codigo').value.trim().toLowerCase();
   var ff=document.getElementById('reg-fecha').value;
-  var fa=document.getElementById('reg-analista').value.trim().toLowerCase();
+  var fs=document.getElementById('reg-sucursal').value.trim().toLowerCase();
   var fp=document.getElementById('reg-prueba').value;
   var codigosConPrueba={};
   REGISTRO.forEach(function(x){ if(x.prueba) codigosConPrueba[x.codigo+'|'+x.fecha]=true; });
@@ -1899,7 +1876,7 @@ function renderRegistro(){
     if(!m.prueba && !m.rechazada && codigosConPrueba[m.codigo+'|'+m.fecha]) return false;
     if(fc&&m.codigo.toLowerCase().indexOf(fc)===-1) return false;
     if(ff&&m.fecha!==ff) return false;
-    if(fa&&(m.analista||'').toLowerCase().indexOf(fa)===-1) return false;
+    if(fs&&(m.sucursal||'').toLowerCase().indexOf(fs)===-1) return false;
     if(fp==='__sin__'){if(m.prueba) return false;}
     else if(fp==='__rechazadas__'){if(!m.rechazada) return false;}
     else if(fp&&FILTRO_GRUPOS_PRUEBA[fp]){if(FILTRO_GRUPOS_PRUEBA[fp].indexOf(m.prueba)===-1) return false;}
@@ -1993,8 +1970,6 @@ function extraerFechaCodigo(codigo){
 }
 
 function renderAnteriores(){
-  var btnHistAnt=document.getElementById('btn-cargar-historial-ant');
-  if(btnHistAnt) btnHistAnt.style.display=HISTORIAL_COMPLETO?'none':'inline-block';
   var hoy=getFechaHoy();
   var container=document.getElementById('ant-container');
   var emptyDiv=document.getElementById('ant-empty');
@@ -2112,7 +2087,7 @@ if(anteriores.length){
 function limpiarFiltrosReg(){
   document.getElementById('reg-codigo').value='';
   document.getElementById('reg-fecha').value='';
-  document.getElementById('reg-analista').value='';
+  document.getElementById('reg-sucursal').value='';
   document.getElementById('reg-prueba').value='';
   renderRegistro();
 }
