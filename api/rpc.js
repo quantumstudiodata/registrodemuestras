@@ -4,13 +4,7 @@
 // como lo hacía Apps Script.
 const muestras = require('../lib/muestras');
 
-// Sube el límite del body para las fotos de perfil en base64 (el límite real de la
-// plataforma en el plan Hobby de Vercel sigue siendo ~4.5MB por request).
-module.exports.config = {
-  api: { bodyParser: { sizeLimit: '10mb' } }
-};
-
-module.exports = async function handler(req, res) {
+async function handler(req, res) {
   if (req.method !== 'POST') {
     res.status(405).json({ message: 'Método no permitido' });
     return;
@@ -35,4 +29,12 @@ module.exports = async function handler(req, res) {
     console.error(`Error en ${fn}:`, err);
     res.status(500).json({ message: err.message || 'Error interno del servidor.' });
   }
+}
+
+// Sube el límite del body para las fotos de perfil en base64 (el límite real de la
+// plataforma en el plan Hobby de Vercel sigue siendo ~4.5MB por request).
+handler.config = {
+  api: { bodyParser: { sizeLimit: '10mb' } }
 };
+
+module.exports = handler;
