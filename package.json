@@ -1,0 +1,12 @@
+{
+  "name": "registro-de-muestras",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Lab — Registro de Muestras, backend en funciones serverless de Vercel + Google Sheets API.",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "googleapis": "^140.0.0"
+  }
+}
