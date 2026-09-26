@@ -870,6 +870,7 @@ function cargarMuestras(){
         MUESTRAS_HOY=REGISTRO.filter(function(m){return m.fecha===hoyCache&&!m.manual;});
         DATOS_CARGADOS=true;
         renderLista();
+        reintentarPendientesGuardado();
       }
     }catch(e){}
   }
@@ -979,7 +980,7 @@ function actualizarBannerPendientes(){
     b.style.cssText='position:fixed;top:0;left:0;right:0;z-index:99999;background:var(--fail);color:#2b0d0d;font-weight:700;font-size:13px;text-align:center;padding:10px 14px;box-shadow:0 4px 14px rgba(0,0,0,.35)';
     document.body.appendChild(b);
   }
-  b.textContent='⚠ '+PENDIENTES_SIN_GUARDAR+' código(s) sin confirmar guardado en el servidor — no cierres esta pestaña.';
+  b.textContent='⚠ '+PENDIENTES_SIN_GUARDAR+' código(s) sin confirmar guardado en el servidor — se reintenta solo, mantén la pestaña abierta si puedes.';
 }
 function intentarGuardarMuestra(codigo,analista,tempId,intento){
   servidor('saveMuestra',[codigo,'',analista,'',1],function(res){
@@ -1002,6 +1003,21 @@ function intentarGuardarMuestra(codigo,analista,tempId,intento){
 function reintentarGuardado(codigo,analista,tempId,intento){
   var espera=Math.min(30000,2000*Math.pow(2,intento));
   setTimeout(function(){ intentarGuardarMuestra(codigo,analista,tempId,intento+1); },espera);
+}
+
+// Al abrir/recargar la página, retoma cualquier código que se quedó sin confirmar guardado
+// (id temporal "temp_...") en una sesión anterior — así no depende de dejar la pestaña
+// abierta para que el reintento en segundo plano no se pierda. Nota: el guardado usa la
+// fecha/hora del servidor en el momento del reintento, así que si el reintento ocurre ya
+// al día siguiente, quedaría registrado con la fecha de hoy, no la del escaneo original.
+function reintentarPendientesGuardado(){
+  var pendientes=MUESTRAS_HOY.filter(function(m){return String(m.id).indexOf('temp_')===0;});
+  if(!pendientes.length) return;
+  PENDIENTES_SIN_GUARDAR+=pendientes.length;
+  actualizarBannerPendientes();
+  pendientes.forEach(function(m){
+    intentarGuardarMuestra(m.codigo,m.analista,m.id,0);
+  });
 }
 
 function onXlsDrop(e){
