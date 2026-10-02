@@ -474,13 +474,34 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
         </div>
       </div>
 
-      <div class="stats-panel-narrow">
-        <div class="stats-section-title"><span>Pruebas del día</span></div>
-        <div class="stats-list" id="stats-dia"></div>
-        <button class="btn-copy-list" onclick="copiarStatsDia()">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1"></rect></svg>
-          Copiar
-        </button>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
+        <div class="stats-panel-narrow" style="flex:1">
+          <div class="stats-section-title"><span>Pruebas del día</span></div>
+          <div class="stats-list" id="stats-dia"></div>
+          <button class="btn-copy-list" onclick="copiarStatsDia()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1"></rect></svg>
+            Copiar
+          </button>
+        </div>
+
+        <div class="stats-panel-narrow" style="flex:1">
+          <div class="stats-section-title"><span>Rondas de llegada</span><span style="font-size:9.5px;color:var(--t5);text-transform:none;letter-spacing:0">últimos ~2 meses, sin domingos</span></div>
+          <div class="kpi-row" style="margin:0 0 14px;gap:10px">
+            <div class="kpi-card" style="min-width:0;padding:12px 14px">
+              <div class="kpi-body">
+                <div class="kpi-label">Rondas promedio / día</div>
+                <div class="kpi-num rd-mono" id="rondas-promedio-num" style="font-size:20px">—</div>
+              </div>
+            </div>
+            <div class="kpi-card" style="min-width:0;padding:12px 14px">
+              <div class="kpi-body">
+                <div class="kpi-label">Cierre promedio</div>
+                <div class="kpi-num rd-mono" id="rondas-cierre-num" style="font-size:20px">—</div>
+              </div>
+            </div>
+          </div>
+          <div class="stats-list" id="stats-rondas"></div>
+        </div>
       </div>
     </div>
     <div id="stat-pane-mes" style="display:none">
@@ -2051,6 +2072,107 @@ function renderStatsHoy(){
   if(capMuestras) capMuestras.textContent=formatComparacionDia(muestrasHoy,muestrasAnt,esHoyReal);
   var capPruebas=document.getElementById('stat-pruebas-caption');
   if(capPruebas) capPruebas.textContent=formatComparacionDia(pruebasHoy,pruebasAnt,esHoyReal);
+
+  renderAnalisisRondas();
+}
+
+// ---------- Análisis de rondas de llegada ----------
+// Una "ronda" es un grupo de escaneos separado de los demás por un hueco de silencio
+// (sin escanear nada) de al menos UMBRAL_RONDA_SEG. La hora de la ronda es la del
+// primer escaneo de ese grupo. Se excluyen domingos y registros manuales/auto.
+var UMBRAL_RONDA_SEG=20*60; // 20 minutos de silencio = empezó una ronda nueva
+
+function horaASegundos(h){
+  var p=String(h||'').split(':');
+  return (parseInt(p[0],10)||0)*3600+(parseInt(p[1],10)||0)*60+(parseInt(p[2],10)||0);
+}
+
+function segundosAHora(s){
+  var hh=Math.floor(s/3600),mm=Math.floor((s%3600)/60);
+  return String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');
+}
+
+function esDomingoFecha(fecha){
+  var p=String(fecha).split('-');
+  if(p.length!==3) return false;
+  var d=new Date(parseInt(p[0],10),parseInt(p[1],10)-1,parseInt(p[2],10));
+  return d.getDay()===0;
+}
+
+function detectarRondasDia(horas){
+  var ordenadas=horas.slice().sort();
+  var rondas=[];
+  var anteriorSeg=null;
+  ordenadas.forEach(function(h){
+    var seg=horaASegundos(h);
+    if(anteriorSeg===null||seg-anteriorSeg>UMBRAL_RONDA_SEG) rondas.push(seg);
+    anteriorSeg=seg;
+  });
+  return rondas; // segundos-desde-medianoche del inicio de cada ronda detectada ese día
+}
+
+function renderAnalisisRondas(){
+  var contRondas=document.getElementById('stats-rondas');
+  if(!contRondas) return;
+
+  var porDia={};
+  REGISTRO.forEach(function(m){
+    if(!m.fecha||!m.hora||m.manual) return;
+    if(esDomingoFecha(m.fecha)) return;
+    if(!porDia[m.fecha]) porDia[m.fecha]=[];
+    porDia[m.fecha].push(m.hora);
+  });
+
+  var fechas=Object.keys(porDia);
+  var numRondasEl=document.getElementById('rondas-promedio-num');
+  var cierreEl=document.getElementById('rondas-cierre-num');
+  if(!fechas.length){
+    contRondas.innerHTML='<div style="font-size:11px;color:var(--sub);padding:.25rem 0">Aún no hay suficientes datos.</div>';
+    if(numRondasEl) numRondasEl.textContent='—';
+    if(cierreEl) cierreEl.textContent='—';
+    return;
+  }
+
+  var porIndice=[]; // porIndice[i] = horas (seg) de la ronda (i+1) de cada día que llegó a tener esa ronda
+  var numRondas=[];
+  var cierres=[];
+
+  fechas.forEach(function(f){
+    var rondas=detectarRondasDia(porDia[f]);
+    numRondas.push(rondas.length);
+    rondas.forEach(function(seg,i){
+      if(!porIndice[i]) porIndice[i]=[];
+      porIndice[i].push(seg);
+    });
+    var horasDelDia=porDia[f].map(horaASegundos);
+    cierres.push(Math.max.apply(null,horasDelDia));
+  });
+
+  function promedio(arr){ return arr.reduce(function(s,v){return s+v;},0)/arr.length; }
+
+  if(numRondasEl) numRondasEl.textContent=promedio(numRondas).toFixed(1);
+  if(cierreEl) cierreEl.textContent=segundosAHora(Math.round(promedio(cierres)));
+
+  // Para no ensuciar el promedio con una ronda rarísima que solo pasó un par de días,
+  // solo se muestra una posición de ronda si apareció en al menos ~30% de los días (mín. 3).
+  var minDias=Math.max(3,Math.round(fechas.length*0.3));
+  var filas=[];
+  porIndice.forEach(function(lista,i){
+    if(lista.length<minDias) return;
+    filas.push({nombre:(i+1)+'ª ronda',valor:segundosAHora(Math.round(promedio(lista)))});
+  });
+
+  if(!filas.length){
+    contRondas.innerHTML='<div style="font-size:11px;color:var(--sub);padding:.25rem 0">Aún no hay suficientes datos.</div>';
+    return;
+  }
+
+  contRondas.innerHTML=filas.map(function(f){
+    return '<div class="stats-row"><div class="stats-row-top">'+
+      '<span class="stats-row-name">'+f.nombre+'</span>'+
+      '<span class="stats-row-val rd-mono">'+f.valor+'</span>'+
+      '</div></div>';
+  }).join('');
 }
 
 function renderStatsMes(){
