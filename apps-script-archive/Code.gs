@@ -656,3 +656,63 @@ function limpiarDuplicadosARPHH() {
   Logger.log(detalle.join('\n'));
   return totalEliminados + ' filas eliminadas. Detalle: ' + detalle.join(' | ');
 }
+
+/**
+ * Reparación de una sola vez: recalcula la sucursal de las filas que quedaron marcadas
+ * como "No tiene registro" (o vacías) por el bug de extraerSucursalCodigo con meses de
+ * 2 dígitos. No toca ninguna fila que ya tenga una sucursal resuelta, para no pisar
+ * correcciones manuales. Ejecútala UNA VEZ desde el editor (▶️ Ejecutar) después de
+ * actualizar Index.html con la función corregida.
+ */
+function repararSucursalesHistoricas() {
+  var SUCURSAL_MAP_ = {
+    '074':'PALMAS','075':'PALMAS','027':'BATERIA 7','039':'SERVICIOS',
+    '021':'MORITA','023':'ARBOLEDAS','037':'MONTEALTO','019':'MASECA',
+    '134':'DUPONT','035':'BOSQUE','015':'PROGRESO I','017':'PROGRESO II',
+    '097':'BENE','093':'TANCOL','058':'AYUNTAMIENTO','062':'AGUA DULCE',
+    '095':'MODELO','047':'SPORT CLINIC','089':'EJERCITO I','064':'EJERCITO II',
+    '091':'MEDICA SALVE','043':'CENTRO','126':'MORELOS','025':'VILLA',
+    '132':'TAMPICO ALTO','105':'CASA BLANCA','029':'TAMAULIPAS','072':'CFE',
+    '031':'GOLFO','041':'DEL PUEBLO','033':'CASCAJAL','156':'PANUCO',
+    '140':'ICEST','150':'ICEST','111':'MADERO','107':'CENTRO MADERO ARTELI',
+    '101':'BOULEVARD II','103':'BOULEVARD IV','128':'REGIONAL','109':'IMSS 2','011':'PIRAMIDE','044':'CENTRO',
+    '001':'ALTAMIRA','112':'MADERO','130':'UNIVERSIDAD','000':'ALTAMIRA','002':'ALTAMIRA',
+    '180':'BLVD I','183':'BLVD III','185':'NORTE','186':'CAMBOYA'
+  };
+
+  function extraerSucursalCodigo_(codigo) {
+    var sinTerminacion = String(codigo || '').split(/[-']/)[0];
+    var resto = sinTerminacion.substring(2);
+    var primerDos = parseInt(resto.substring(0, 2), 10);
+    var offsetMes = (primerDos >= 10 && primerDos <= 12) ? 2 : 1;
+    if (sinTerminacion.length !== 2 + offsetMes + 7) return null;
+    var offsetDia = offsetMes + 2;
+    var codigoSuc = resto.substring(offsetDia, offsetDia + 3);
+    return SUCURSAL_MAP_[codigoSuc] || null;
+  }
+
+  var hojas = getAllMonthSheets();
+  var reparadas = 0;
+  var detalle = [];
+
+  hojas.forEach(function(sh) {
+    var data = sh.getDataRange().getValues();
+    var reparadasHoja = 0;
+    for (var r = 1; r < data.length; r++) {
+      if (!data[r][0]) continue;
+      var sucursalActual = String(data[r][8] || '').trim();
+      if (sucursalActual !== '' && sucursalActual !== 'No tiene registro') continue; // no tocar ya resueltas
+      var nueva = extraerSucursalCodigo_(data[r][3]);
+      if (nueva) {
+        sh.getRange(r + 1, 9).setValue(nueva);
+        reparadas++;
+        reparadasHoja++;
+      }
+    }
+    if (reparadasHoja > 0) detalle.push(sh.getName() + ': ' + reparadasHoja);
+  });
+
+  var resumen = 'Listo: ' + reparadas + ' fila(s) reparada(s). Detalle: ' + detalle.join(' | ');
+  Logger.log(resumen);
+  return resumen;
+}
