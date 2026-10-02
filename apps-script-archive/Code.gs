@@ -716,3 +716,66 @@ function repararSucursalesHistoricas() {
   Logger.log(resumen);
   return resumen;
 }
+
+// ---------- Análisis histórico (todos los meses, no solo los últimos cargados en el cliente) ----------
+var CATEGORIAS_TENDENCIA_SERVIDOR_ = {
+  'Coprológico': ['COPROLOGICO'],
+  'CPS': ['CPS', 'CPS2', 'CPS3'],
+  'Sangre oculta': ['SOH', 'SOH2', 'SOH3'],
+  'Helicobacter': ['HELIH']
+};
+
+function diaSemanaDeFecha_(fecha) {
+  var p = String(fecha).split('-');
+  if (p.length !== 3) return null;
+  return new Date(parseInt(p[0], 10), parseInt(p[1], 10) - 1, parseInt(p[2], 10)).getDay();
+}
+
+function getAnalisisHistorico() {
+  try {
+    var hojas = getAllMonthSheets();
+    var nombresCategorias = Object.keys(CATEGORIAS_TENDENCIA_SERVIDOR_);
+    var porDiaSemana = {};
+    for (var d = 1; d <= 6; d++) porDiaSemana[d] = { total: 0, dias: {} };
+    var porMes = {};
+
+    hojas.forEach(function(sh) {
+      var mes = sh.getName();
+      var data = sh.getDataRange().getValues();
+      var totalesMes = {};
+      nombresCategorias.forEach(function(n) { totalesMes[n] = 0; });
+
+      for (var r = 1; r < data.length; r++) {
+        var row = data[r];
+        if (!row[0]) continue;
+
+        var fechaRaw = row[1];
+        var fecha = (fechaRaw instanceof Date) ? Utilities.formatDate(fechaRaw, TZ, 'yyyy-MM-dd') : String(fechaRaw).substring(0, 10);
+        var prueba = String(row[4] || '');
+        var estado = String(row[9] || '');
+        var esManual = (estado === 'manual' || estado === 'auto');
+
+        nombresCategorias.forEach(function(nombre) {
+          if (CATEGORIAS_TENDENCIA_SERVIDOR_[nombre].indexOf(prueba) !== -1) totalesMes[nombre]++;
+        });
+
+        if (esManual) continue;
+        var diaSem = diaSemanaDeFecha_(fecha);
+        if (diaSem === null || diaSem === 0) continue;
+        porDiaSemana[diaSem].total++;
+        porDiaSemana[diaSem].dias[fecha] = true;
+      }
+
+      porMes[mes] = totalesMes;
+    });
+
+    var diaSemanaResumen = {};
+    Object.keys(porDiaSemana).forEach(function(k) {
+      diaSemanaResumen[k] = { total: porDiaSemana[k].total, numDias: Object.keys(porDiaSemana[k].dias).length };
+    });
+
+    return { success: true, porDiaSemana: diaSemanaResumen, porMes: porMes, meses: hojas.map(function(sh){ return sh.getName(); }) };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}

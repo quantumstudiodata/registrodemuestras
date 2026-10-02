@@ -437,8 +437,7 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
     </div>
     <div class="stats-tabs">
       <button class="stats-tab on" onclick="switchStatTab('hoy',this)">Hoy</button>
-      <button class="stats-tab" onclick="switchStatTab('mes',this)">Este mes</button>
-      <button class="stats-tab" onclick="switchStatTab('anterior',this)">Mes anterior</button>
+      <button class="stats-tab" onclick="switchStatTab('mes',this)">Mes</button>
     </div>
     <div id="stat-pane-hoy">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:1.25rem">
@@ -504,37 +503,29 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
         </div>
       </div>
 
-      <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;margin-top:16px">
-        <div class="stats-panel-narrow" style="flex:1">
-          <div class="stats-section-title"><span>Hora de mayor volumen</span><span style="font-size:9.5px;color:var(--t5);text-transform:none;letter-spacing:0">promedio por hora</span></div>
-          <div class="stats-list" id="stats-horavolumen"></div>
-        </div>
-
-        <div class="stats-panel-narrow" style="flex:1">
-          <div class="stats-section-title"><span>Muestras por día de la semana</span><span style="font-size:9.5px;color:var(--t5);text-transform:none;letter-spacing:0">promedio por día</span></div>
-          <div class="stats-list" id="stats-diasemana"></div>
-        </div>
+      <div class="stats-panel-narrow" style="margin-top:16px;max-width:100%">
+        <div class="stats-section-title"><span>Hora de mayor volumen</span><span style="font-size:9.5px;color:var(--t5);text-transform:none;letter-spacing:0">últimos ~3 meses, sin domingos</span></div>
+        <div class="stats-list" id="stats-horavolumen"></div>
       </div>
 
       <div class="stats-panel-narrow" style="margin-top:16px;max-width:100%">
-        <div class="stats-section-title"><span>Tendencia mensual por prueba</span></div>
-        <div class="stats-list" id="stats-tendencia"></div>
+        <div class="stats-section-title"><span>Muestras por día de la semana</span><span style="font-size:9.5px;color:var(--t5);text-transform:none;letter-spacing:0">todo el histórico, sin domingos</span></div>
+        <div class="stats-list" id="stats-diasemana"></div>
       </div>
     </div>
     <div id="stat-pane-mes" style="display:none">
-      <div class="stats-panel-narrow">
-        <div class="stats-section-title" id="stats-mes-title">Este mes</div>
-        <div class="stats-list" id="stats-mes"></div>
-      </div>
-    </div>
-    <div id="stat-pane-anterior" style="display:none">
       <div class="mes-selector">
         <label style="font-size:11px;color:var(--sub)">Seleccionar mes:</label>
-        <select id="sel-mes-anterior" onchange="renderStatsAnterior()"></select>
+        <select id="sel-mes" onchange="renderStatsMesCompleto()"></select>
       </div>
       <div class="stats-panel-narrow">
-        <div class="stats-section-title" id="stats-anterior-title">Mes anterior</div>
-        <div class="stats-list" id="stats-anterior"></div>
+        <div class="stats-section-title" id="stats-mes-title">Mes</div>
+        <div class="stats-list" id="stats-mes"></div>
+      </div>
+
+      <div class="stats-panel-narrow" style="margin-top:16px">
+        <div class="stats-section-title"><span>Tendencia mensual por prueba</span><span style="font-size:9.5px;color:var(--t5);text-transform:none;letter-spacing:0">todo el histórico</span></div>
+        <div class="stats-list" id="stats-tendencia"></div>
       </div>
     </div>
   </div>
@@ -1951,10 +1942,8 @@ function switchStatTab(tab,btn){
   btn.classList.add('on');
   document.getElementById('stat-pane-hoy').style.display=tab==='hoy'?'block':'none';
   document.getElementById('stat-pane-mes').style.display=tab==='mes'?'block':'none';
-  document.getElementById('stat-pane-anterior').style.display=tab==='anterior'?'block':'none';
-if(tab==='hoy') renderStatsHoy();
-  if(tab==='mes') renderStatsMes();
-  if(tab==='anterior') asegurarHistorialCompleto(function(){ renderStatsAnterior(); });
+  if(tab==='hoy') renderStatsHoy();
+  if(tab==='mes') renderStatsMesCompleto();
 }
 
 function calcStatsFromList(lista){
@@ -2092,7 +2081,6 @@ function renderStatsHoy(){
   renderAnalisisRondas();
   renderHoraMayorVolumen();
   renderMuestrasPorDiaSemana();
-  renderTendenciaMensual();
 }
 
 // ---------- Análisis de rondas de llegada ----------
@@ -2231,14 +2219,31 @@ function renderHoraMayorVolumen(){
     diasVistos[m.fecha]=true;
   });
   var numDias=Object.keys(diasVistos).length;
-  if(!numDias){ renderBarraSimple('stats-horavolumen',[]); return; }
+  var cont=document.getElementById('stats-horavolumen');
+  if(!cont) return;
+  if(!numDias){ cont.innerHTML='<div style="font-size:11px;color:var(--sub);padding:.25rem 0">Aún no hay suficientes datos.</div>'; return; }
 
   var horas=Object.keys(porHora).map(Number).sort(function(a,b){return a-b;});
-  var filas=horas.map(function(h){ return {nombre:String(h),valor:porHora[h]/numDias}; });
-  renderBarraSimple('stats-horavolumen',filas);
+  var max=0;
+  var proms=horas.map(function(h){ var p=porHora[h]/numDias; if(p>max) max=p; return p; });
+
+  cont.innerHTML=horas.map(function(h,i){
+    var prom=proms[i];
+    var pct=max>0?Math.round(prom/max*100):0;
+    return '<div class="stats-row"><div class="stats-row-top">'+
+      '<span class="stats-row-name rd-mono">'+String(h).padStart(2,'0')+':00</span>'+
+      '<span class="stats-row-val rd-mono">'+prom.toFixed(1)+' muestras</span></div>'+
+      '<div class="stats-row-bar"><div class="stats-row-fill" data-w="'+pct+'" style="width:0%"></div></div>'+
+    '</div>';
+  }).join('');
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      cont.querySelectorAll('.stats-row-fill').forEach(function(f){ f.style.width=f.getAttribute('data-w')+'%'; });
+    });
+  });
 }
 
-// ---------- Muestras por día de la semana ----------
+// ---------- Muestras por día de la semana (todo el histórico) ----------
 var NOMBRES_DIA_SEMANA=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
 
 function diaSemanaFecha(fecha){
@@ -2248,108 +2253,112 @@ function diaSemanaFecha(fecha){
 }
 
 function renderMuestrasPorDiaSemana(){
-  var porDia={}; // 1-6 -> {total, dias:{fecha:true}}
-  REGISTRO.forEach(function(m){
-    if(!m.fecha||m.manual) return;
-    var ds=diaSemanaFecha(m.fecha);
-    if(ds===0) return; // excluir domingo
-    if(!porDia[ds]) porDia[ds]={total:0,dias:{}};
-    porDia[ds].total++;
-    porDia[ds].dias[m.fecha]=true;
+  cargarAnalisisHistorico(function(datos){
+    if(!datos||!datos.porDiaSemana){ renderBarraSimple('stats-diasemana',[]); return; }
+
+    var filas=[1,2,3,4,5,6].map(function(ds){
+      var info=datos.porDiaSemana[ds];
+      var prom=info&&info.numDias?info.total/info.numDias:0;
+      return {nombre:NOMBRES_DIA_SEMANA[ds],valor:prom};
+    }).filter(function(f){ return f.valor>0; });
+
+    renderBarraSimple('stats-diasemana',filas);
   });
-
-  var filas=[1,2,3,4,5,6].map(function(ds){
-    var info=porDia[ds];
-    var numDias=info?Object.keys(info.dias).length:0;
-    var prom=info&&numDias?info.total/numDias:0;
-    return {nombre:NOMBRES_DIA_SEMANA[ds],valor:prom};
-  }).filter(function(f){ return f.valor>0; });
-
-  renderBarraSimple('stats-diasemana',filas);
 }
 
-// ---------- Tendencia mensual por prueba ----------
-function renderTendenciaMensual(){
+// ---------- Pestaña "Mes": selector de cualquier mes + tendencia histórica ----------
+var ANALISIS_HISTORICO_CACHE=null;
+var CATEGORIAS_TENDENCIA=['Coprológico','CPS','Sangre oculta','Helicobacter'];
+var NOMBRES_MES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+var NOMBRES_MES_CORTO=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+function cargarAnalisisHistorico(cb){
+  if(ANALISIS_HISTORICO_CACHE){ cb(ANALISIS_HISTORICO_CACHE); return; }
+  servidor('getAnalisisHistorico',[],function(res){
+    ANALISIS_HISTORICO_CACHE=(res&&res.success)?res:null;
+    cb(ANALISIS_HISTORICO_CACHE);
+  },function(){ cb(null); });
+}
+
+function renderStatsMesCompleto(){
+  cargarAnalisisHistorico(function(datos){
+    var sel=document.getElementById('sel-mes');
+    if(!datos||!datos.meses||!datos.meses.length){
+      sel.innerHTML='<option>Sin datos</option>';
+      document.getElementById('stats-mes').innerHTML='<div style="font-size:11px;color:var(--sub);padding:.5rem">No hay registros.</div>';
+      document.getElementById('stats-tendencia').innerHTML='<div style="font-size:11px;color:var(--sub);padding:.25rem 0">Aún no hay suficientes datos.</div>';
+      return;
+    }
+
+    var mesesOrdenados=datos.meses.slice().sort().reverse(); // más reciente primero
+
+    if(sel.dataset.built!=='1'){
+      sel.innerHTML='';
+      mesesOrdenados.forEach(function(m){
+        var p=m.split('-');
+        var opt=document.createElement('option');
+        opt.value=m; opt.textContent=NOMBRES_MES[parseInt(p[1],10)-1]+' '+p[0];
+        sel.appendChild(opt);
+      });
+      var mesActual=getMesActual();
+      if(mesesOrdenados.indexOf(mesActual)!==-1) sel.value=mesActual;
+      sel.dataset.built='1';
+    }
+
+    var mesSelec=sel.value||mesesOrdenados[0];
+    var parts=mesSelec.split('-');
+    document.getElementById('stats-mes-title').textContent=NOMBRES_MES[parseInt(parts[1],10)-1]+' '+parts[0];
+
+    servidor('getMuestrasMes',[mesSelec],function(res2){
+      if(res2&&res2.success) renderStatsListSimple('stats-mes',calcStatsFromList(res2.muestras||[]));
+    });
+
+    renderTendenciaMensualCompleta(datos);
+  });
+}
+
+function renderTendenciaMensualCompleta(datos){
   var cont=document.getElementById('stats-tendencia');
   if(!cont) return;
 
-  var meses=[getMesHaceN(2),getMesHaceN(1),getMesHaceN(0)]; // viejo -> nuevo
-  var nombresMes=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  var etiquetas=meses.map(function(m){ var p=m.split('-'); return nombresMes[parseInt(p[1],10)-1].substring(0,3); });
+  var mesesOrdenados=datos.meses.slice().sort(); // viejo -> nuevo
+  var mesActualStr=getMesActual();
+  var mesesCompletos=mesesOrdenados.filter(function(m){ return m!==mesActualStr; });
 
-  var countsPorMes=meses.map(function(m){
-    var lista=REGISTRO.filter(function(x){ return String(x.fecha).substring(0,7)===m; });
-    return calcStatsFromList(lista);
-  });
+  var html='';
+  CATEGORIAS_TENDENCIA.forEach(function(cat){
+    var serie=mesesOrdenados.map(function(m){ return (datos.porMes[m]&&datos.porMes[m][cat])||0; });
+    var max=Math.max.apply(null,serie.concat([1]));
 
-  var mesActualIncompleto=(meses[2]===getMesActual());
-
-  var html='<div class="stats-row"><div class="stats-row-top">'+
-    '<span class="stats-row-name" style="font-size:9.5px;color:var(--t4);text-transform:uppercase;letter-spacing:.5px">Prueba</span>'+
-    '<span class="stats-row-val rd-mono" style="font-size:9.5px;color:var(--t4)">'+etiquetas[0]+' · '+etiquetas[1]+' · '+etiquetas[2]+(mesActualIncompleto?' *':'')+'</span>'+
-  '</div></div>';
-
-  var hayFilas=false;
-  Object.keys(ESTADISTICAS_CATS).forEach(function(cat){
-    var v0=countsPorMes[0][cat]||0,v1=countsPorMes[1][cat]||0,v2=countsPorMes[2][cat]||0;
-    if(v0===0&&v1===0&&v2===0) return;
-    hayFilas=true;
+    var completosSerie=mesesCompletos.map(function(m){ return (datos.porMes[m]&&datos.porMes[m][cat])||0; });
     var flecha='→',color='var(--sub)';
-    if(v1>v0){ flecha='↑'; color='var(--acc)'; }
-    else if(v1<v0){ flecha='↓'; color='var(--fail)'; }
-    html+='<div class="stats-row"><div class="stats-row-top">'+
-      '<span class="stats-row-name">'+ESTADISTICAS_CATS[cat]+' <span style="color:'+color+'">'+flecha+'</span></span>'+
-      '<span class="stats-row-val rd-mono">'+v0+' · '+v1+' · '+v2+'</span></div></div>';
+    if(completosSerie.length>=2){
+      var ultimo=completosSerie[completosSerie.length-1];
+      var anterior=completosSerie[completosSerie.length-2];
+      if(ultimo>anterior){ flecha='↑'; color='var(--acc)'; }
+      else if(ultimo<anterior){ flecha='↓'; color='var(--fail)'; }
+    }
+    var valorMostrado=completosSerie.length?completosSerie[completosSerie.length-1]:(serie.length?serie[serie.length-1]:0);
+
+    var barras=mesesOrdenados.map(function(m,i){
+      var v=serie[i];
+      var pct=max>0?Math.round(v/max*100):0;
+      var esActual=(m===mesActualStr);
+      var p=m.split('-');
+      var titulo=NOMBRES_MES_CORTO[parseInt(p[1],10)-1]+' '+p[0]+': '+v;
+      return '<div title="'+titulo+'" style="flex:1;min-width:4px;background:'+(esActual?'var(--border2)':'var(--acc)')+';opacity:'+(esActual?'.5':'.75')+';border-radius:2px;height:'+Math.max(pct,3)+'%"></div>';
+    }).join('');
+
+    html+='<div class="stats-row">'+
+      '<div class="stats-row-top">'+
+        '<span class="stats-row-name">'+cat+' <span style="color:'+color+'">'+flecha+'</span></span>'+
+        '<span class="stats-row-val rd-mono">'+valorMostrado+'</span>'+
+      '</div>'+
+      '<div style="display:flex;gap:2px;align-items:flex-end;height:30px;margin-top:6px">'+barras+'</div>'+
+    '</div>';
   });
 
-  if(!hayFilas){
-    cont.innerHTML='<div style="font-size:11px;color:var(--sub);padding:.25rem 0">Aún no hay suficientes datos.</div>';
-    return;
-  }
-
-  if(mesActualIncompleto){
-    html+='<div style="font-size:9.5px;color:var(--t5);margin-top:8px">* mes en curso, aún no cerrado — la flecha compara solo los 2 meses ya completos.</div>';
-  }
   cont.innerHTML=html;
-}
-
-function renderStatsMes(){
-  var mes=getMesActual();
-  var lista=REGISTRO.filter(function(m){return String(m.fecha).substring(0,7)===mes;});
-  var meses=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  var d=new Date(new Date().getTime()+(-6*60*60*1000));
-  document.getElementById('stats-mes-title').textContent=meses[d.getUTCMonth()]+' '+d.getUTCFullYear();
-  renderStatsListSimple('stats-mes',calcStatsFromList(lista));
-}
-
-function renderStatsAnterior(){
-  var sel=document.getElementById('sel-mes-anterior');
-  var mesesDisp={};
-  REGISTRO.forEach(function(m){var mes=String(m.fecha).substring(0,7);if(mes)mesesDisp[mes]=true;});
-  var mesActual=getMesActual();
-  var meses=Object.keys(mesesDisp).filter(function(m){return m!==mesActual;}).sort().reverse();
-  if(sel.dataset.built!=='1'){
-    sel.innerHTML='';
-    var nm=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-    meses.forEach(function(m){
-      var p=m.split('-');
-      var opt=document.createElement('option');
-      opt.value=m; opt.textContent=nm[parseInt(p[1],10)-1]+' '+p[0];
-      sel.appendChild(opt);
-    });
-    sel.dataset.built='1';
-    if(!meses.length){
-      sel.innerHTML='<option>Sin datos anteriores</option>';
-      document.getElementById('stats-anterior').innerHTML='<div style="font-size:11px;color:var(--sub);padding:.5rem">No hay registros anteriores.</div>';
-      return;
-    }
-  }
-  var mesSelec=sel.value;
-  var lista=REGISTRO.filter(function(m){return String(m.fecha).substring(0,7)===mesSelec;});
-  var parts=mesSelec.split('-');
-  var nm=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  document.getElementById('stats-anterior-title').textContent=nm[parseInt(parts[1],10)-1]+' '+parts[0];
-  renderStatsListSimple('stats-anterior',calcStatsFromList(lista));
 }
 
 var ORDEN_COPIAR_STATS=['CPS','SOH','AZUCARES','PH','GRASAS_NEUTRAS','AMF','WRIGHT','KINYOUN','HELIH','ROTA_ADENO_ASTRO','CALPROT_LACTO','CRYPTO_GIARDIA','ENTAMOEBA','CLOSTRIDIUM','FOB_TRANSF'];
