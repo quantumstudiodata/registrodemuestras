@@ -485,7 +485,7 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
         </div>
 
         <div class="stats-panel-narrow" style="flex:1">
-          <div class="stats-section-title"><span>Rondas de llegada</span><span style="font-size:9.5px;color:var(--t5);text-transform:none;letter-spacing:0">últimos ~2 meses, sin domingos</span></div>
+          <div class="stats-section-title"><span>Rondas de llegada</span><span style="font-size:9.5px;color:var(--t5);text-transform:none;letter-spacing:0">últimos ~3 meses, sin domingos</span></div>
           <div class="kpi-row" style="margin:0 0 14px;gap:10px">
             <div class="kpi-card" style="min-width:0;padding:12px 14px">
               <div class="kpi-body">
@@ -765,6 +765,13 @@ function getMesAnterior(){
   var anioAnterior = d.getUTCMonth()===0 ? anio-1 : anio;
   return anioAnterior+'-'+String(mesAnteriorNum).padStart(2,'0');
 }
+function getMesHaceN(n){
+  var d=new Date(new Date().getTime()+(-6*60*60*1000));
+  var total=d.getUTCMonth()-n; // puede quedar negativo, se ajusta abajo
+  var anio=d.getUTCFullYear()+Math.floor(total/12);
+  var mes=((total%12)+12)%12; // 0-11, siempre positivo
+  return anio+'-'+String(mes+1).padStart(2,'0');
+}
 
 function extraerCodigoPaciente(cod){
   var s=cod.split(/[-']/)[0];
@@ -891,11 +898,12 @@ function cargarMuestras(){
       }
     }catch(e){}
   }
-  var mesActual=getMesActual();
-  var mesAnterior=getMesAnterior();
+  var mesActual=getMesHaceN(0);
+  var mesAnterior=getMesHaceN(1);
+  var mesAnterior2=getMesHaceN(2);
   CARGA_TOKEN++;
   var miToken=CARGA_TOKEN;
-  servidor('getMuestrasMeses',[[mesActual, mesAnterior]],function(res){
+  servidor('getMuestrasMeses',[[mesActual, mesAnterior, mesAnterior2]],function(res){
     if(miToken!==CARGA_TOKEN) return; // llegó una llamada más nueva primero, descartar esta
 if(res&&res.success){
       REGISTRO=res.muestras||[];
