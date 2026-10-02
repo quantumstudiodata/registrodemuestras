@@ -773,15 +773,16 @@ var SUCURSAL_MAP = {
 
 function extraerSucursalCodigo(codigo){
   var sinTerminacion=codigo.split(/[-']/)[0];
-  // El código no lleva año: es [mes][día(2)][sucursal(3)][consecutivo(2)].
+  // Formato: [año(2)][mes][día(2)][sucursal(3)][consecutivo(2)].
   // El mes va sin cero a la izquierda, así que mide 1 dígito (1-9) o 2 (10-12).
-  var primerDos=parseInt(sinTerminacion.substring(0,2),10);
+  var resto=sinTerminacion.substring(2); // quitar año
+  var primerDos=parseInt(resto.substring(0,2),10);
   var offsetMes=(primerDos>=10&&primerDos<=12)?2:1; // mes 2 dígitos : mes 1 dígito
-  if(sinTerminacion.length!==offsetMes+7) return 'No tiene registro'; // día(2)+sucursal(3)+consecutivo(2)=7
+  if(sinTerminacion.length!==2+offsetMes+7) return 'No tiene registro'; // año(2)+mes+día(2)+sucursal(3)+consecutivo(2)
   // Saltar día (2 dígitos)
   var offsetDia=offsetMes+2;
   // Tomar 3 dígitos de sucursal
-  var codigoSuc=sinTerminacion.substring(offsetDia,offsetDia+3);
+  var codigoSuc=resto.substring(offsetDia,offsetDia+3);
   return SUCURSAL_MAP[codigoSuc]||null;
 }
 
