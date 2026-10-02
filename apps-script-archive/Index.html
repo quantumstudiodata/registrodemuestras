@@ -154,6 +154,11 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
 .mes-selector{display:flex;align-items:center;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
 .mes-selector select{padding:6px 10px;border:1px solid var(--border);border-radius:8px;font-family:'Archivo',sans-serif;font-size:12px;background:rgba(0,0,0,.32);color:var(--text);outline:none}
 .stats-panel-narrow{max-width:560px;background:var(--card);backdrop-filter:blur(14px);border:1px solid var(--border);border-radius:16px;padding:20px 22px}
+.stats-compact{padding:14px 16px}
+.stats-compact .stats-list{gap:7px;margin-top:10px;max-height:260px;overflow-y:auto}
+.stats-compact .stats-row-name,.stats-compact .stats-row-val{font-size:11px}
+.stats-compact .stats-row-bar{height:4px}
+.stats-compact .stats-row-top{gap:6px}
 .stats-section-title{font-size:11px;color:var(--t4);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;padding-bottom:12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
 .stats-total-mono{font-family:'IBM Plex Mono',monospace;color:var(--t2);font-size:12px}
 .stats-list{display:flex;flex-direction:column;gap:12px;margin-top:14px}
@@ -474,7 +479,7 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
       </div>
 
       <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
-        <div class="stats-panel-narrow" style="flex:1">
+        <div class="stats-panel-narrow" style="flex:1.4;min-width:220px">
           <div class="stats-section-title"><span>Pruebas del día</span></div>
           <div class="stats-list" id="stats-dia"></div>
           <button class="btn-copy-list" onclick="copiarStatsDia()">
@@ -483,7 +488,7 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
           </button>
         </div>
 
-        <div class="stats-panel-narrow" style="flex:1">
+        <div class="stats-panel-narrow" style="flex:1.4;min-width:220px">
           <div class="stats-section-title"><span>Rondas de llegada</span><span style="font-size:9.5px;color:var(--t5);text-transform:none;letter-spacing:0">últimos ~3 meses, sin domingos</span></div>
           <div class="kpi-row" style="margin:0 0 14px;gap:10px">
             <div class="kpi-card" style="min-width:0;padding:12px 14px">
@@ -501,16 +506,16 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
           </div>
           <div class="stats-list" id="stats-rondas"></div>
         </div>
-      </div>
 
-      <div class="stats-panel-narrow" style="margin-top:16px;max-width:100%">
-        <div class="stats-section-title"><span>Hora de mayor volumen</span><span style="font-size:9.5px;color:var(--t5);text-transform:none;letter-spacing:0">últimos ~3 meses, sin domingos</span></div>
-        <div class="stats-list" id="stats-horavolumen"></div>
-      </div>
+        <div class="stats-panel-narrow stats-compact" style="flex:1;min-width:170px">
+          <div class="stats-section-title"><span>Hora de mayor volumen</span></div>
+          <div class="stats-list" id="stats-horavolumen"></div>
+        </div>
 
-      <div class="stats-panel-narrow" style="margin-top:16px;max-width:100%">
-        <div class="stats-section-title"><span>Muestras por día de la semana</span><span style="font-size:9.5px;color:var(--t5);text-transform:none;letter-spacing:0">todo el histórico, sin domingos</span></div>
-        <div class="stats-list" id="stats-diasemana"></div>
+        <div class="stats-panel-narrow stats-compact" style="flex:1;min-width:170px">
+          <div class="stats-section-title"><span>Muestras / día semana</span></div>
+          <div class="stats-list" id="stats-diasemana"></div>
+        </div>
       </div>
     </div>
     <div id="stat-pane-mes" style="display:none">
@@ -518,14 +523,16 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
         <label style="font-size:11px;color:var(--sub)">Seleccionar mes:</label>
         <select id="sel-mes" onchange="renderStatsMesCompleto()"></select>
       </div>
-      <div class="stats-panel-narrow">
-        <div class="stats-section-title" id="stats-mes-title">Mes</div>
-        <div class="stats-list" id="stats-mes"></div>
-      </div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
+        <div class="stats-panel-narrow" style="flex:1;min-width:220px">
+          <div class="stats-section-title" id="stats-mes-title">Mes</div>
+          <div class="stats-list" id="stats-mes"></div>
+        </div>
 
-      <div class="stats-panel-narrow" style="margin-top:16px">
-        <div class="stats-section-title"><span>Tendencia mensual por prueba</span><span style="font-size:9.5px;color:var(--t5);text-transform:none;letter-spacing:0">todo el histórico</span></div>
-        <div class="stats-list" id="stats-tendencia"></div>
+        <div class="stats-panel-narrow" style="flex:1;min-width:220px">
+          <div class="stats-section-title"><span>Tendencia mensual por prueba</span><span style="font-size:9.5px;color:var(--t5);text-transform:none;letter-spacing:0">todo el histórico</span></div>
+          <div class="stats-list" id="stats-tendencia"></div>
+        </div>
       </div>
     </div>
   </div>
