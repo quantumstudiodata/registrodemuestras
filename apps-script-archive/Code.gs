@@ -736,7 +736,7 @@ function getAnalisisHistorico() {
     var hojas = getAllMonthSheets();
     var nombresCategorias = Object.keys(CATEGORIAS_TENDENCIA_SERVIDOR_);
     var porDiaSemana = {};
-    for (var d = 1; d <= 6; d++) porDiaSemana[d] = { total: 0, dias: {} };
+    for (var d = 0; d <= 6; d++) porDiaSemana[d] = { total: 0, dias: {} };
     var porMes = {};
 
     hojas.forEach(function(sh) {
@@ -761,7 +761,7 @@ function getAnalisisHistorico() {
 
         if (esManual) continue;
         var diaSem = diaSemanaDeFecha_(fecha);
-        if (diaSem === null || diaSem === 0) continue;
+        if (diaSem === null) continue;
         porDiaSemana[diaSem].total++;
         porDiaSemana[diaSem].dias[fecha] = true;
       }
