@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#0c0c0d">
 <meta name="color-scheme" content="dark">
 <title>Lab — Registro de Muestras</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='4' y='5' width='1.8' height='14' rx='0.5' fill='%23AD97F7'/%3E%3Crect x='7.4' y='5' width='1.8' height='14' rx='0.5' fill='%23AD97F7'/%3E%3Crect x='10.8' y='5' width='3.4' height='14' rx='0.5' fill='%23AD97F7'/%3E%3Crect x='16' y='5' width='1.8' height='14' rx='0.5' fill='%23AD97F7'/%3E%3Crect x='19.4' y='5' width='1.8' height='14' rx='0.5' fill='%23AD97F7'/%3E%3C/svg%3E">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
@@ -338,12 +339,12 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
   <aside id="sidebar">
     <div class="sb-brand">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f7f7f8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v6.5L4 18a2 2 0 0 0 1.8 3h12.4a2 2 0 0 0 1.8-3l-5-9.5V2"></path><line x1="8" y1="2" x2="16" y2="2"></line><line x1="7" y1="14" x2="17" y2="14"></line></svg>
-      <div>Registro</div>
+      <div>Registro de muestras</div>
     </div>
     <nav class="sb-nav">
       <button class="sb-btn on" onclick="goTab('scan',this)"><span class="sb-icon-wrap"><span class="sb-halo"></span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span><span>Escaneo</span></button>
       <button class="sb-btn" onclick="goTab('stats',this)"><span class="sb-icon-wrap"><span class="sb-halo"></span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg></span><span>Estadísticas</span></button>
-      <button class="sb-btn" onclick="goTab('registro',this)"><span class="sb-icon-wrap"><span class="sb-halo"></span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1"></rect></svg></span><span>Registro</span></button>
+      <button class="sb-btn" onclick="goTab('registro',this)"><span class="sb-icon-wrap"><span class="sb-halo"></span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1"></rect></svg></span><span>Registro de muestras</span></button>
       <button class="sb-btn" onclick="goTab('anteriores',this)"><span class="sb-icon-wrap"><span class="sb-halo"></span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span><span>Anteriores</span></button>
     </nav>
     <div class="sb-footer">
@@ -473,13 +474,51 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
         </div>
       </div>
 
-      <div class="stats-panel-narrow">
-        <div class="stats-section-title"><span>Pruebas del día</span></div>
-        <div class="stats-list" id="stats-dia"></div>
-        <button class="btn-copy-list" onclick="copiarStatsDia()">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1"></rect></svg>
-          Copiar
-        </button>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
+        <div class="stats-panel-narrow" style="flex:1">
+          <div class="stats-section-title"><span>Pruebas del día</span></div>
+          <div class="stats-list" id="stats-dia"></div>
+          <button class="btn-copy-list" onclick="copiarStatsDia()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1"></rect></svg>
+            Copiar
+          </button>
+        </div>
+
+        <div class="stats-panel-narrow" style="flex:1">
+          <div class="stats-section-title"><span>Rondas de llegada</span><span style="font-size:9.5px;color:var(--t5);text-transform:none;letter-spacing:0">últimos ~3 meses, sin domingos</span></div>
+          <div class="kpi-row" style="margin:0 0 14px;gap:10px">
+            <div class="kpi-card" style="min-width:0;padding:12px 14px">
+              <div class="kpi-body">
+                <div class="kpi-label">Rondas promedio / día</div>
+                <div class="kpi-num rd-mono" id="rondas-promedio-num" style="font-size:20px">—</div>
+              </div>
+            </div>
+            <div class="kpi-card" style="min-width:0;padding:12px 14px">
+              <div class="kpi-body">
+                <div class="kpi-label">Cierre promedio</div>
+                <div class="kpi-num rd-mono" id="rondas-cierre-num" style="font-size:20px">—</div>
+              </div>
+            </div>
+          </div>
+          <div class="stats-list" id="stats-rondas"></div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;margin-top:16px">
+        <div class="stats-panel-narrow" style="flex:1">
+          <div class="stats-section-title"><span>Hora de mayor volumen</span><span style="font-size:9.5px;color:var(--t5);text-transform:none;letter-spacing:0">promedio por hora</span></div>
+          <div class="stats-list" id="stats-horavolumen"></div>
+        </div>
+
+        <div class="stats-panel-narrow" style="flex:1">
+          <div class="stats-section-title"><span>Muestras por día de la semana</span><span style="font-size:9.5px;color:var(--t5);text-transform:none;letter-spacing:0">promedio por día</span></div>
+          <div class="stats-list" id="stats-diasemana"></div>
+        </div>
+      </div>
+
+      <div class="stats-panel-narrow" style="margin-top:16px;max-width:100%">
+        <div class="stats-section-title"><span>Tendencia mensual por prueba</span></div>
+        <div class="stats-list" id="stats-tendencia"></div>
       </div>
     </div>
     <div id="stat-pane-mes" style="display:none">
@@ -734,6 +773,13 @@ function getMesAnterior(){
   var anioAnterior = d.getUTCMonth()===0 ? anio-1 : anio;
   return anioAnterior+'-'+String(mesAnteriorNum).padStart(2,'0');
 }
+function getMesHaceN(n){
+  var d=new Date(new Date().getTime()+(-6*60*60*1000));
+  var total=d.getUTCMonth()-n; // puede quedar negativo, se ajusta abajo
+  var anio=d.getUTCFullYear()+Math.floor(total/12);
+  var mes=((total%12)+12)%12; // 0-11, siempre positivo
+  return anio+'-'+String(mes+1).padStart(2,'0');
+}
 
 function extraerCodigoPaciente(cod){
   var s=cod.split(/[-']/)[0];
@@ -849,21 +895,23 @@ function updateAddBtn(){
 function cargarMuestras(){
   if(!DATOS_CARGADOS){
     try{
-      var cache=sessionStorage.getItem('lab_registro_cache');
+      var cache=localStorage.getItem('lab_registro_cache');
       if(cache){
         REGISTRO=JSON.parse(cache);
         var hoyCache=getFechaHoy();
         MUESTRAS_HOY=REGISTRO.filter(function(m){return m.fecha===hoyCache&&!m.manual;});
         DATOS_CARGADOS=true;
         renderLista();
+        reintentarPendientesGuardado();
       }
     }catch(e){}
   }
-  var mesActual=getMesActual();
-  var mesAnterior=getMesAnterior();
+  var mesActual=getMesHaceN(0);
+  var mesAnterior=getMesHaceN(1);
+  var mesAnterior2=getMesHaceN(2);
   CARGA_TOKEN++;
   var miToken=CARGA_TOKEN;
-  servidor('getMuestrasMeses',[[mesActual, mesAnterior]],function(res){
+  servidor('getMuestrasMeses',[[mesActual, mesAnterior, mesAnterior2]],function(res){
     if(miToken!==CARGA_TOKEN) return; // llegó una llamada más nueva primero, descartar esta
 if(res&&res.success){
       REGISTRO=res.muestras||[];
@@ -908,11 +956,11 @@ function asegurarHistorialCompleto(cb){
   });
 }
 function guardarLocal(){
-  try{sessionStorage.setItem('lab_hoy_'+getFechaHoy(),JSON.stringify(MUESTRAS_HOY));}catch(e){}
+  try{localStorage.setItem('lab_hoy_'+getFechaHoy(),JSON.stringify(MUESTRAS_HOY));}catch(e){}
 }
 
 function guardarCacheRegistro(){
-  try{sessionStorage.setItem('lab_registro_cache',JSON.stringify(REGISTRO));}catch(e){}
+  try{localStorage.setItem('lab_registro_cache',JSON.stringify(REGISTRO));}catch(e){}
 }
 
 function agregarMuestra(){
@@ -947,7 +995,28 @@ function agregarMuestra(){
   document.getElementById('inp-codigo').focus();
   toast('Registrado ✓','ok');
 
-servidor('saveMuestra',[codigoEscaneado,'',analista,'',1],function(res){
+  PENDIENTES_SIN_GUARDAR++;
+  actualizarBannerPendientes();
+  intentarGuardarMuestra(codigoEscaneado,analista,tempId,0);
+}
+
+// Reintenta guardar en el servidor con backoff hasta confirmar, en vez de rendirse tras
+// un solo intento (una falla de red silenciosa dejaba códigos escaneados solo en pantalla,
+// sin llegar nunca a la hoja de cálculo, y sin ningún aviso permanente de que eso pasó).
+var PENDIENTES_SIN_GUARDAR=0;
+function actualizarBannerPendientes(){
+  var b=document.getElementById('banner-pendientes');
+  if(PENDIENTES_SIN_GUARDAR<=0){ if(b) b.remove(); return; }
+  if(!b){
+    b=document.createElement('div');
+    b.id='banner-pendientes';
+    b.style.cssText='position:fixed;top:0;left:0;right:0;z-index:99999;background:var(--fail);color:#2b0d0d;font-weight:700;font-size:13px;text-align:center;padding:10px 14px;box-shadow:0 4px 14px rgba(0,0,0,.35)';
+    document.body.appendChild(b);
+  }
+  b.textContent='⚠ '+PENDIENTES_SIN_GUARDAR+' código(s) sin confirmar guardado en el servidor — se reintenta solo, mantén la pestaña abierta si puedes.';
+}
+function intentarGuardarMuestra(codigo,analista,tempId,intento){
+  servidor('saveMuestra',[codigo,'',analista,'',1],function(res){
     if(res&&res.success){
       var idx=MUESTRAS_HOY.findIndex(function(x){return x.id===tempId;});
       if(idx!==-1) MUESTRAS_HOY[idx].id=res.ids[0];
@@ -955,7 +1024,32 @@ servidor('saveMuestra',[codigoEscaneado,'',analista,'',1],function(res){
       if(idx2!==-1) REGISTRO[idx2].id=res.ids[0];
       guardarLocal();
       renderLista();
-    } else toast('Error al guardar en servidor','err');
+      PENDIENTES_SIN_GUARDAR=Math.max(0,PENDIENTES_SIN_GUARDAR-1);
+      actualizarBannerPendientes();
+    } else {
+      reintentarGuardado(codigo,analista,tempId,intento);
+    }
+  },function(){
+    reintentarGuardado(codigo,analista,tempId,intento);
+  });
+}
+function reintentarGuardado(codigo,analista,tempId,intento){
+  var espera=Math.min(30000,2000*Math.pow(2,intento));
+  setTimeout(function(){ intentarGuardarMuestra(codigo,analista,tempId,intento+1); },espera);
+}
+
+// Al abrir/recargar la página, retoma cualquier código que se quedó sin confirmar guardado
+// (id temporal "temp_...") en una sesión anterior — así no depende de dejar la pestaña
+// abierta para que el reintento en segundo plano no se pierda. Nota: el guardado usa la
+// fecha/hora del servidor en el momento del reintento, así que si el reintento ocurre ya
+// al día siguiente, quedaría registrado con la fecha de hoy, no la del escaneo original.
+function reintentarPendientesGuardado(){
+  var pendientes=MUESTRAS_HOY.filter(function(m){return String(m.id).indexOf('temp_')===0;});
+  if(!pendientes.length) return;
+  PENDIENTES_SIN_GUARDAR+=pendientes.length;
+  actualizarBannerPendientes();
+  pendientes.forEach(function(m){
+    intentarGuardarMuestra(m.codigo,m.analista,m.id,0);
   });
 }
 
@@ -1994,6 +2088,229 @@ function renderStatsHoy(){
   if(capMuestras) capMuestras.textContent=formatComparacionDia(muestrasHoy,muestrasAnt,esHoyReal);
   var capPruebas=document.getElementById('stat-pruebas-caption');
   if(capPruebas) capPruebas.textContent=formatComparacionDia(pruebasHoy,pruebasAnt,esHoyReal);
+
+  renderAnalisisRondas();
+  renderHoraMayorVolumen();
+  renderMuestrasPorDiaSemana();
+  renderTendenciaMensual();
+}
+
+// ---------- Análisis de rondas de llegada ----------
+// Una "ronda" es un grupo de escaneos separado de los demás por un hueco de silencio
+// (sin escanear nada) de al menos UMBRAL_RONDA_SEG. La hora de la ronda es la del
+// primer escaneo de ese grupo. Se excluyen domingos y registros manuales/auto.
+var UMBRAL_RONDA_SEG=20*60; // 20 minutos de silencio = empezó una ronda nueva
+
+function horaASegundos(h){
+  var p=String(h||'').split(':');
+  return (parseInt(p[0],10)||0)*3600+(parseInt(p[1],10)||0)*60+(parseInt(p[2],10)||0);
+}
+
+function segundosAHora(s){
+  var hh=Math.floor(s/3600),mm=Math.floor((s%3600)/60);
+  return String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');
+}
+
+function esDomingoFecha(fecha){
+  var p=String(fecha).split('-');
+  if(p.length!==3) return false;
+  var d=new Date(parseInt(p[0],10),parseInt(p[1],10)-1,parseInt(p[2],10));
+  return d.getDay()===0;
+}
+
+function detectarRondasDia(horas){
+  var ordenadas=horas.slice().sort();
+  var rondas=[];
+  var anteriorSeg=null;
+  ordenadas.forEach(function(h){
+    var seg=horaASegundos(h);
+    if(anteriorSeg===null||seg-anteriorSeg>UMBRAL_RONDA_SEG) rondas.push(seg);
+    anteriorSeg=seg;
+  });
+  return rondas; // segundos-desde-medianoche del inicio de cada ronda detectada ese día
+}
+
+function renderAnalisisRondas(){
+  var contRondas=document.getElementById('stats-rondas');
+  if(!contRondas) return;
+
+  var porDia={};
+  REGISTRO.forEach(function(m){
+    if(!m.fecha||!m.hora||m.manual) return;
+    if(esDomingoFecha(m.fecha)) return;
+    if(!porDia[m.fecha]) porDia[m.fecha]=[];
+    porDia[m.fecha].push(m.hora);
+  });
+
+  var fechas=Object.keys(porDia);
+  var numRondasEl=document.getElementById('rondas-promedio-num');
+  var cierreEl=document.getElementById('rondas-cierre-num');
+  if(!fechas.length){
+    contRondas.innerHTML='<div style="font-size:11px;color:var(--sub);padding:.25rem 0">Aún no hay suficientes datos.</div>';
+    if(numRondasEl) numRondasEl.textContent='—';
+    if(cierreEl) cierreEl.textContent='—';
+    return;
+  }
+
+  var porIndice=[]; // porIndice[i] = horas (seg) de la ronda (i+1) de cada día que llegó a tener esa ronda
+  var numRondas=[];
+  var cierres=[];
+
+  fechas.forEach(function(f){
+    var rondas=detectarRondasDia(porDia[f]);
+    numRondas.push(rondas.length);
+    rondas.forEach(function(seg,i){
+      if(!porIndice[i]) porIndice[i]=[];
+      porIndice[i].push(seg);
+    });
+    var horasDelDia=porDia[f].map(horaASegundos);
+    cierres.push(Math.max.apply(null,horasDelDia));
+  });
+
+  function promedio(arr){ return arr.reduce(function(s,v){return s+v;},0)/arr.length; }
+
+  if(numRondasEl) numRondasEl.textContent=promedio(numRondas).toFixed(1);
+  if(cierreEl) cierreEl.textContent=segundosAHora(Math.round(promedio(cierres)));
+
+  // Para no ensuciar el promedio con una ronda rarísima que solo pasó un par de días,
+  // solo se muestra una posición de ronda si apareció en al menos ~30% de los días (mín. 3).
+  var minDias=Math.max(3,Math.round(fechas.length*0.3));
+  var filas=[];
+  porIndice.forEach(function(lista,i){
+    if(lista.length<minDias) return;
+    filas.push({nombre:(i+1)+'ª ronda',valor:segundosAHora(Math.round(promedio(lista)))});
+  });
+
+  if(!filas.length){
+    contRondas.innerHTML='<div style="font-size:11px;color:var(--sub);padding:.25rem 0">Aún no hay suficientes datos.</div>';
+    return;
+  }
+
+  contRondas.innerHTML=filas.map(function(f){
+    return '<div class="stats-row"><div class="stats-row-top">'+
+      '<span class="stats-row-name">'+f.nombre+'</span>'+
+      '<span class="stats-row-val rd-mono">'+f.valor+'</span>'+
+      '</div></div>';
+  }).join('');
+}
+
+function renderBarraSimple(contId,filas){
+  var cont=document.getElementById(contId);
+  if(!cont) return;
+  if(!filas.length){
+    cont.innerHTML='<div style="font-size:11px;color:var(--sub);padding:.25rem 0">Aún no hay suficientes datos.</div>';
+    return;
+  }
+  var max=0;
+  filas.forEach(function(f){ if(f.valor>max) max=f.valor; });
+  cont.innerHTML=filas.map(function(f){
+    var pct=max>0?Math.round(f.valor/max*100):0;
+    return '<div class="stats-row"><div class="stats-row-top">'+
+      '<span class="stats-row-name">'+f.nombre+'</span>'+
+      '<span class="stats-row-val rd-mono">'+f.valor.toFixed(1)+'</span></div>'+
+      '<div class="stats-row-bar"><div class="stats-row-fill" data-w="'+pct+'" style="width:0%"></div></div>'+
+    '</div>';
+  }).join('');
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      cont.querySelectorAll('.stats-row-fill').forEach(function(f){ f.style.width=f.getAttribute('data-w')+'%'; });
+    });
+  });
+}
+
+// ---------- Hora de mayor volumen ----------
+function renderHoraMayorVolumen(){
+  var porHora={};
+  var diasVistos={};
+  REGISTRO.forEach(function(m){
+    if(!m.fecha||!m.hora||m.manual) return;
+    if(esDomingoFecha(m.fecha)) return;
+    var hh=parseInt(String(m.hora).split(':')[0],10);
+    if(isNaN(hh)) return;
+    porHora[hh]=(porHora[hh]||0)+1;
+    diasVistos[m.fecha]=true;
+  });
+  var numDias=Object.keys(diasVistos).length;
+  if(!numDias){ renderBarraSimple('stats-horavolumen',[]); return; }
+
+  var horas=Object.keys(porHora).map(Number).sort(function(a,b){return a-b;});
+  var filas=horas.map(function(h){ return {nombre:String(h),valor:porHora[h]/numDias}; });
+  renderBarraSimple('stats-horavolumen',filas);
+}
+
+// ---------- Muestras por día de la semana ----------
+var NOMBRES_DIA_SEMANA=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+
+function diaSemanaFecha(fecha){
+  var p=String(fecha).split('-');
+  var d=new Date(parseInt(p[0],10),parseInt(p[1],10)-1,parseInt(p[2],10));
+  return d.getDay(); // 0=domingo...6=sábado
+}
+
+function renderMuestrasPorDiaSemana(){
+  var porDia={}; // 1-6 -> {total, dias:{fecha:true}}
+  REGISTRO.forEach(function(m){
+    if(!m.fecha||m.manual) return;
+    var ds=diaSemanaFecha(m.fecha);
+    if(ds===0) return; // excluir domingo
+    if(!porDia[ds]) porDia[ds]={total:0,dias:{}};
+    porDia[ds].total++;
+    porDia[ds].dias[m.fecha]=true;
+  });
+
+  var filas=[1,2,3,4,5,6].map(function(ds){
+    var info=porDia[ds];
+    var numDias=info?Object.keys(info.dias).length:0;
+    var prom=info&&numDias?info.total/numDias:0;
+    return {nombre:NOMBRES_DIA_SEMANA[ds],valor:prom};
+  }).filter(function(f){ return f.valor>0; });
+
+  renderBarraSimple('stats-diasemana',filas);
+}
+
+// ---------- Tendencia mensual por prueba ----------
+function renderTendenciaMensual(){
+  var cont=document.getElementById('stats-tendencia');
+  if(!cont) return;
+
+  var meses=[getMesHaceN(2),getMesHaceN(1),getMesHaceN(0)]; // viejo -> nuevo
+  var nombresMes=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  var etiquetas=meses.map(function(m){ var p=m.split('-'); return nombresMes[parseInt(p[1],10)-1].substring(0,3); });
+
+  var countsPorMes=meses.map(function(m){
+    var lista=REGISTRO.filter(function(x){ return String(x.fecha).substring(0,7)===m; });
+    return calcStatsFromList(lista);
+  });
+
+  var mesActualIncompleto=(meses[2]===getMesActual());
+
+  var html='<div class="stats-row"><div class="stats-row-top">'+
+    '<span class="stats-row-name" style="font-size:9.5px;color:var(--t4);text-transform:uppercase;letter-spacing:.5px">Prueba</span>'+
+    '<span class="stats-row-val rd-mono" style="font-size:9.5px;color:var(--t4)">'+etiquetas[0]+' · '+etiquetas[1]+' · '+etiquetas[2]+(mesActualIncompleto?' *':'')+'</span>'+
+  '</div></div>';
+
+  var hayFilas=false;
+  Object.keys(ESTADISTICAS_CATS).forEach(function(cat){
+    var v0=countsPorMes[0][cat]||0,v1=countsPorMes[1][cat]||0,v2=countsPorMes[2][cat]||0;
+    if(v0===0&&v1===0&&v2===0) return;
+    hayFilas=true;
+    var flecha='→',color='var(--sub)';
+    if(v1>v0){ flecha='↑'; color='var(--acc)'; }
+    else if(v1<v0){ flecha='↓'; color='var(--fail)'; }
+    html+='<div class="stats-row"><div class="stats-row-top">'+
+      '<span class="stats-row-name">'+ESTADISTICAS_CATS[cat]+' <span style="color:'+color+'">'+flecha+'</span></span>'+
+      '<span class="stats-row-val rd-mono">'+v0+' · '+v1+' · '+v2+'</span></div></div>';
+  });
+
+  if(!hayFilas){
+    cont.innerHTML='<div style="font-size:11px;color:var(--sub);padding:.25rem 0">Aún no hay suficientes datos.</div>';
+    return;
+  }
+
+  if(mesActualIncompleto){
+    html+='<div style="font-size:9.5px;color:var(--t5);margin-top:8px">* mes en curso, aún no cerrado — la flecha compara solo los 2 meses ya completos.</div>';
+  }
+  cont.innerHTML=html;
 }
 
 function renderStatsMes(){
