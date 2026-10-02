@@ -503,6 +503,23 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
           <div class="stats-list" id="stats-rondas"></div>
         </div>
       </div>
+
+      <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;margin-top:16px">
+        <div class="stats-panel-narrow" style="flex:1">
+          <div class="stats-section-title"><span>Hora de mayor volumen</span><span style="font-size:9.5px;color:var(--t5);text-transform:none;letter-spacing:0">promedio por hora</span></div>
+          <div class="stats-list" id="stats-horavolumen"></div>
+        </div>
+
+        <div class="stats-panel-narrow" style="flex:1">
+          <div class="stats-section-title"><span>Muestras por día de la semana</span><span style="font-size:9.5px;color:var(--t5);text-transform:none;letter-spacing:0">promedio por día</span></div>
+          <div class="stats-list" id="stats-diasemana"></div>
+        </div>
+      </div>
+
+      <div class="stats-panel-narrow" style="margin-top:16px;max-width:100%">
+        <div class="stats-section-title"><span>Tendencia mensual por prueba</span></div>
+        <div class="stats-list" id="stats-tendencia"></div>
+      </div>
     </div>
     <div id="stat-pane-mes" style="display:none">
       <div class="stats-panel-narrow">
@@ -2082,6 +2099,9 @@ function renderStatsHoy(){
   if(capPruebas) capPruebas.textContent=formatComparacionDia(pruebasHoy,pruebasAnt,esHoyReal);
 
   renderAnalisisRondas();
+  renderHoraMayorVolumen();
+  renderMuestrasPorDiaSemana();
+  renderTendenciaMensual();
 }
 
 // ---------- Análisis de rondas de llegada ----------
@@ -2181,6 +2201,125 @@ function renderAnalisisRondas(){
       '<span class="stats-row-val rd-mono">'+f.valor+'</span>'+
       '</div></div>';
   }).join('');
+}
+
+function renderBarraSimple(contId,filas){
+  var cont=document.getElementById(contId);
+  if(!cont) return;
+  if(!filas.length){
+    cont.innerHTML='<div style="font-size:11px;color:var(--sub);padding:.25rem 0">Aún no hay suficientes datos.</div>';
+    return;
+  }
+  var max=0;
+  filas.forEach(function(f){ if(f.valor>max) max=f.valor; });
+  cont.innerHTML=filas.map(function(f){
+    var pct=max>0?Math.round(f.valor/max*100):0;
+    return '<div class="stats-row"><div class="stats-row-top">'+
+      '<span class="stats-row-name">'+f.nombre+'</span>'+
+      '<span class="stats-row-val rd-mono">'+f.valor.toFixed(1)+'</span></div>'+
+      '<div class="stats-row-bar"><div class="stats-row-fill" data-w="'+pct+'" style="width:0%"></div></div>'+
+    '</div>';
+  }).join('');
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      cont.querySelectorAll('.stats-row-fill').forEach(function(f){ f.style.width=f.getAttribute('data-w')+'%'; });
+    });
+  });
+}
+
+// ---------- Hora de mayor volumen ----------
+function renderHoraMayorVolumen(){
+  var porHora={};
+  var diasVistos={};
+  REGISTRO.forEach(function(m){
+    if(!m.fecha||!m.hora||m.manual) return;
+    if(esDomingoFecha(m.fecha)) return;
+    var hh=parseInt(String(m.hora).split(':')[0],10);
+    if(isNaN(hh)) return;
+    porHora[hh]=(porHora[hh]||0)+1;
+    diasVistos[m.fecha]=true;
+  });
+  var numDias=Object.keys(diasVistos).length;
+  if(!numDias){ renderBarraSimple('stats-horavolumen',[]); return; }
+
+  var horas=Object.keys(porHora).map(Number).sort(function(a,b){return a-b;});
+  var filas=horas.map(function(h){ return {nombre:String(h),valor:porHora[h]/numDias}; });
+  renderBarraSimple('stats-horavolumen',filas);
+}
+
+// ---------- Muestras por día de la semana ----------
+var NOMBRES_DIA_SEMANA=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+
+function diaSemanaFecha(fecha){
+  var p=String(fecha).split('-');
+  var d=new Date(parseInt(p[0],10),parseInt(p[1],10)-1,parseInt(p[2],10));
+  return d.getDay(); // 0=domingo...6=sábado
+}
+
+function renderMuestrasPorDiaSemana(){
+  var porDia={}; // 1-6 -> {total, dias:{fecha:true}}
+  REGISTRO.forEach(function(m){
+    if(!m.fecha||m.manual) return;
+    var ds=diaSemanaFecha(m.fecha);
+    if(ds===0) return; // excluir domingo
+    if(!porDia[ds]) porDia[ds]={total:0,dias:{}};
+    porDia[ds].total++;
+    porDia[ds].dias[m.fecha]=true;
+  });
+
+  var filas=[1,2,3,4,5,6].map(function(ds){
+    var info=porDia[ds];
+    var numDias=info?Object.keys(info.dias).length:0;
+    var prom=info&&numDias?info.total/numDias:0;
+    return {nombre:NOMBRES_DIA_SEMANA[ds],valor:prom};
+  }).filter(function(f){ return f.valor>0; });
+
+  renderBarraSimple('stats-diasemana',filas);
+}
+
+// ---------- Tendencia mensual por prueba ----------
+function renderTendenciaMensual(){
+  var cont=document.getElementById('stats-tendencia');
+  if(!cont) return;
+
+  var meses=[getMesHaceN(2),getMesHaceN(1),getMesHaceN(0)]; // viejo -> nuevo
+  var nombresMes=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  var etiquetas=meses.map(function(m){ var p=m.split('-'); return nombresMes[parseInt(p[1],10)-1].substring(0,3); });
+
+  var countsPorMes=meses.map(function(m){
+    var lista=REGISTRO.filter(function(x){ return String(x.fecha).substring(0,7)===m; });
+    return calcStatsFromList(lista);
+  });
+
+  var mesActualIncompleto=(meses[2]===getMesActual());
+
+  var html='<div class="stats-row"><div class="stats-row-top">'+
+    '<span class="stats-row-name" style="font-size:9.5px;color:var(--t4);text-transform:uppercase;letter-spacing:.5px">Prueba</span>'+
+    '<span class="stats-row-val rd-mono" style="font-size:9.5px;color:var(--t4)">'+etiquetas[0]+' · '+etiquetas[1]+' · '+etiquetas[2]+(mesActualIncompleto?' *':'')+'</span>'+
+  '</div></div>';
+
+  var hayFilas=false;
+  Object.keys(ESTADISTICAS_CATS).forEach(function(cat){
+    var v0=countsPorMes[0][cat]||0,v1=countsPorMes[1][cat]||0,v2=countsPorMes[2][cat]||0;
+    if(v0===0&&v1===0&&v2===0) return;
+    hayFilas=true;
+    var flecha='→',color='var(--sub)';
+    if(v1>v0){ flecha='↑'; color='var(--acc)'; }
+    else if(v1<v0){ flecha='↓'; color='var(--fail)'; }
+    html+='<div class="stats-row"><div class="stats-row-top">'+
+      '<span class="stats-row-name">'+ESTADISTICAS_CATS[cat]+' <span style="color:'+color+'">'+flecha+'</span></span>'+
+      '<span class="stats-row-val rd-mono">'+v0+' · '+v1+' · '+v2+'</span></div></div>';
+  });
+
+  if(!hayFilas){
+    cont.innerHTML='<div style="font-size:11px;color:var(--sub);padding:.25rem 0">Aún no hay suficientes datos.</div>';
+    return;
+  }
+
+  if(mesActualIncompleto){
+    html+='<div style="font-size:9.5px;color:var(--t5);margin-top:8px">* mes en curso, aún no cerrado — la flecha compara solo los 2 meses ya completos.</div>';
+  }
+  cont.innerHTML=html;
 }
 
 function renderStatsMes(){
