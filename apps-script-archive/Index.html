@@ -479,7 +479,7 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
       </div>
 
       <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
-        <div class="stats-panel-narrow" style="flex:1.4;min-width:220px">
+        <div class="stats-panel-narrow" style="flex:1;min-width:220px">
           <div class="stats-section-title"><span>Pruebas del día</span></div>
           <div class="stats-list" id="stats-dia"></div>
           <button class="btn-copy-list" onclick="copiarStatsDia()">
@@ -488,33 +488,37 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
           </button>
         </div>
 
-        <div class="stats-panel-narrow" style="flex:1.4;min-width:220px">
-          <div class="stats-section-title"><span>Rondas de llegada</span><span style="font-size:9.5px;color:var(--t5);text-transform:none;letter-spacing:0">últimos ~3 meses, sin domingos</span></div>
-          <div class="kpi-row" style="margin:0 0 14px;gap:10px">
-            <div class="kpi-card" style="min-width:0;padding:12px 14px">
-              <div class="kpi-body">
-                <div class="kpi-label">Rondas promedio / día</div>
-                <div class="kpi-num rd-mono" id="rondas-promedio-num" style="font-size:20px">—</div>
+        <div style="flex:1;min-width:220px;display:flex;flex-direction:column;gap:16px">
+          <div class="stats-panel-narrow">
+            <div class="stats-section-title"><span>Rondas de llegada</span><span style="font-size:9.5px;color:var(--t5);text-transform:none;letter-spacing:0">últimos ~3 meses, sin domingos</span></div>
+            <div class="kpi-row" style="margin:0 0 14px;gap:10px">
+              <div class="kpi-card" style="min-width:0;padding:12px 14px">
+                <div class="kpi-body">
+                  <div class="kpi-label">Rondas promedio / día</div>
+                  <div class="kpi-num rd-mono" id="rondas-promedio-num" style="font-size:20px">—</div>
+                </div>
+              </div>
+              <div class="kpi-card" style="min-width:0;padding:12px 14px">
+                <div class="kpi-body">
+                  <div class="kpi-label">Cierre promedio</div>
+                  <div class="kpi-num rd-mono" id="rondas-cierre-num" style="font-size:20px">—</div>
+                </div>
               </div>
             </div>
-            <div class="kpi-card" style="min-width:0;padding:12px 14px">
-              <div class="kpi-body">
-                <div class="kpi-label">Cierre promedio</div>
-                <div class="kpi-num rd-mono" id="rondas-cierre-num" style="font-size:20px">—</div>
-              </div>
+            <div class="stats-list" id="stats-rondas"></div>
+          </div>
+
+          <div style="display:flex;gap:16px">
+            <div class="stats-panel-narrow stats-compact" style="flex:1;min-width:0">
+              <div class="stats-section-title"><span>Hora de mayor volumen</span></div>
+              <div class="stats-list" id="stats-horavolumen"></div>
+            </div>
+
+            <div class="stats-panel-narrow stats-compact" style="flex:1;min-width:0">
+              <div class="stats-section-title"><span>Muestras / día semana</span></div>
+              <div class="stats-list" id="stats-diasemana"></div>
             </div>
           </div>
-          <div class="stats-list" id="stats-rondas"></div>
-        </div>
-
-        <div class="stats-panel-narrow stats-compact" style="flex:1;min-width:170px">
-          <div class="stats-section-title"><span>Hora de mayor volumen</span></div>
-          <div class="stats-list" id="stats-horavolumen"></div>
-        </div>
-
-        <div class="stats-panel-narrow stats-compact" style="flex:1;min-width:170px">
-          <div class="stats-section-title"><span>Muestras / día semana</span></div>
-          <div class="stats-list" id="stats-diasemana"></div>
         </div>
       </div>
     </div>
