@@ -897,14 +897,13 @@ function updateAddBtn(){
 function cargarMuestras(){
   if(!DATOS_CARGADOS){
     try{
-      var cache=localStorage.getItem('lab_registro_cache');
+      var cache=sessionStorage.getItem('lab_registro_cache');
       if(cache){
         REGISTRO=JSON.parse(cache);
         var hoyCache=getFechaHoy();
         MUESTRAS_HOY=REGISTRO.filter(function(m){return m.fecha===hoyCache&&!m.manual;});
         DATOS_CARGADOS=true;
         renderLista();
-        reintentarPendientesGuardado();
       }
     }catch(e){}
   }
@@ -958,11 +957,11 @@ function asegurarHistorialCompleto(cb){
   });
 }
 function guardarLocal(){
-  try{localStorage.setItem('lab_hoy_'+getFechaHoy(),JSON.stringify(MUESTRAS_HOY));}catch(e){}
+  try{sessionStorage.setItem('lab_hoy_'+getFechaHoy(),JSON.stringify(MUESTRAS_HOY));}catch(e){}
 }
 
 function guardarCacheRegistro(){
-  try{localStorage.setItem('lab_registro_cache',JSON.stringify(REGISTRO));}catch(e){}
+  try{sessionStorage.setItem('lab_registro_cache',JSON.stringify(REGISTRO));}catch(e){}
 }
 
 function agregarMuestra(){
@@ -997,28 +996,7 @@ function agregarMuestra(){
   document.getElementById('inp-codigo').focus();
   toast('Registrado ✓','ok');
 
-  PENDIENTES_SIN_GUARDAR++;
-  actualizarBannerPendientes();
-  intentarGuardarMuestra(codigoEscaneado,analista,tempId,0);
-}
-
-// Reintenta guardar en el servidor con backoff hasta confirmar, en vez de rendirse tras
-// un solo intento (una falla de red silenciosa dejaba códigos escaneados solo en pantalla,
-// sin llegar nunca a la hoja de cálculo, y sin ningún aviso permanente de que eso pasó).
-var PENDIENTES_SIN_GUARDAR=0;
-function actualizarBannerPendientes(){
-  var b=document.getElementById('banner-pendientes');
-  if(PENDIENTES_SIN_GUARDAR<=0){ if(b) b.remove(); return; }
-  if(!b){
-    b=document.createElement('div');
-    b.id='banner-pendientes';
-    b.style.cssText='position:fixed;top:0;left:0;right:0;z-index:99999;background:var(--fail);color:#2b0d0d;font-weight:700;font-size:13px;text-align:center;padding:10px 14px;box-shadow:0 4px 14px rgba(0,0,0,.35)';
-    document.body.appendChild(b);
-  }
-  b.textContent='⚠ '+PENDIENTES_SIN_GUARDAR+' código(s) sin confirmar guardado en el servidor — se reintenta solo, mantén la pestaña abierta si puedes.';
-}
-function intentarGuardarMuestra(codigo,analista,tempId,intento){
-  servidor('saveMuestra',[codigo,'',analista,'',1],function(res){
+servidor('saveMuestra',[codigoEscaneado,'',analista,'',1],function(res){
     if(res&&res.success){
       var idx=MUESTRAS_HOY.findIndex(function(x){return x.id===tempId;});
       if(idx!==-1) MUESTRAS_HOY[idx].id=res.ids[0];
@@ -1026,32 +1004,7 @@ function intentarGuardarMuestra(codigo,analista,tempId,intento){
       if(idx2!==-1) REGISTRO[idx2].id=res.ids[0];
       guardarLocal();
       renderLista();
-      PENDIENTES_SIN_GUARDAR=Math.max(0,PENDIENTES_SIN_GUARDAR-1);
-      actualizarBannerPendientes();
-    } else {
-      reintentarGuardado(codigo,analista,tempId,intento);
-    }
-  },function(){
-    reintentarGuardado(codigo,analista,tempId,intento);
-  });
-}
-function reintentarGuardado(codigo,analista,tempId,intento){
-  var espera=Math.min(30000,2000*Math.pow(2,intento));
-  setTimeout(function(){ intentarGuardarMuestra(codigo,analista,tempId,intento+1); },espera);
-}
-
-// Al abrir/recargar la página, retoma cualquier código que se quedó sin confirmar guardado
-// (id temporal "temp_...") en una sesión anterior — así no depende de dejar la pestaña
-// abierta para que el reintento en segundo plano no se pierda. Nota: el guardado usa la
-// fecha/hora del servidor en el momento del reintento, así que si el reintento ocurre ya
-// al día siguiente, quedaría registrado con la fecha de hoy, no la del escaneo original.
-function reintentarPendientesGuardado(){
-  var pendientes=MUESTRAS_HOY.filter(function(m){return String(m.id).indexOf('temp_')===0;});
-  if(!pendientes.length) return;
-  PENDIENTES_SIN_GUARDAR+=pendientes.length;
-  actualizarBannerPendientes();
-  pendientes.forEach(function(m){
-    intentarGuardarMuestra(m.codigo,m.analista,m.id,0);
+    } else toast('Error al guardar en servidor','err');
   });
 }
 
