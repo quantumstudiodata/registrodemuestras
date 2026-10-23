@@ -302,6 +302,8 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
 .reac-inp:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-bg)}
 .reac-btn{height:38px;padding:0 14px;border-radius:9px;border:1px solid var(--border2);background:rgba(255,255,255,.04);color:var(--text);font-family:'Archivo',sans-serif;font-size:12px;cursor:pointer;white-space:nowrap}
 .reac-btn:hover{border-color:var(--acc)}
+.reac-btn:disabled{opacity:.5;cursor:default}
+.reac-pop{display:inline-block;animation:kpiNumPop .4s ease}
 .reac-btn.pri{background:#f7f7f8;color:#0c0c0d;border-color:#f7f7f8;font-weight:700}
 .reac-ayuda{font-size:10.5px;color:var(--sub);margin-top:6px}
 .reac-hist{border:1px solid rgba(255,255,255,.12);border-radius:11px;overflow:hidden}
@@ -1469,7 +1471,7 @@ var REACTIVO_UMBRAL_CRITICO=2;
 var REACTIVO_UMBRAL_BAJO=5;
 var REACTIVOS_DATA=null;
 var REACTIVO_SEL=REACTIVOS_DEF[0].clave;
-var REAC_MUESTRAS_EXTRA=[]; // meses más viejos que los 3 que ya carga cargarMuestras()
+var REAC_MUESTRAS_EXTRA=[]; var REAC_GUARDANDO=false; // meses más viejos que los 3 que ya carga cargarMuestras()
 var REAC_MESES_EXTRA={};
 
 function escHtml(s){
@@ -1586,6 +1588,7 @@ function renderDetalleReactivo(){
   var colorRest=est==='critico'?'var(--fail)':(est==='bajo'?'#f5b94a':'var(--text)');
   var hist=(r.historial||[]).slice().reverse();
   var anterior=hist.length>1?hist[1].lote:'';
+  var dis=REAC_GUARDANDO?' disabled':'';
   var baseTxt=conCantidad?fmtFechaReac(r.base)+', '+segundosAHora12(horaASegundos(r.base.substring(11))):'';
 
   var histHtml=hist.length?hist.map(function(h){
@@ -1599,19 +1602,19 @@ function renderDetalleReactivo(){
       '<div style="font-size:11.5px;color:var(--sub)">'+(conCantidad?'Último ajuste: '+baseTxt:'Aún sin cantidad registrada')+'</div>'+
     '</div>'+
     '<div class="reac-stats">'+
-      '<div class="reac-stat"><div class="reac-stat-lbl">Quedan</div><div class="rd-mono" style="font-size:30px;font-weight:700;margin-top:2px;color:'+colorRest+'">'+(conCantidad?rest:'—')+'</div></div>'+
+      '<div class="reac-stat"><div class="reac-stat-lbl">Quedan</div><div class="rd-mono" id="reac-quedan" style="font-size:30px;font-weight:700;margin-top:2px;color:'+colorRest+'">'+(conCantidad?rest:'—')+'</div></div>'+
       '<div class="reac-stat"><div class="reac-stat-lbl">Cargaste</div><div class="rd-mono" style="font-size:20px;font-weight:600;margin-top:8px">'+(conCantidad?r.cantidad:'—')+'</div><div class="reac-stat-sub">'+(conCantidad?'el '+fmtFechaReac(r.base):'')+'</div></div>'+
       '<div class="reac-stat"><div class="reac-stat-lbl">Usados (auto)</div><div class="rd-mono" style="font-size:20px;font-weight:600;margin-top:8px">'+(conCantidad?'−'+usadosReactivo(r):'—')+'</div><div class="reac-stat-sub">según estadísticas</div></div>'+
     '</div>'+
     '<div class="reac-campos">'+
       '<div>'+
         '<label class="reac-lbl" for="reac-lote">Lote actual</label>'+
-        '<div style="display:flex;gap:8px"><input class="reac-inp" id="reac-lote" value="'+escHtml(r.lote)+'" placeholder="Ej. HP2409A" autocomplete="off"><button type="button" class="reac-btn" onclick="cambiarLoteReactivo()">Cambiar</button></div>'+
+        '<div style="display:flex;gap:8px"><input class="reac-inp" id="reac-lote" value="'+escHtml(r.lote)+'" placeholder="Ej. HP2409A" autocomplete="off" onkeydown="if(event.key===\'Enter\')cambiarLoteReactivo()"><button type="button" class="reac-btn"'+dis+' onclick="cambiarLoteReactivo()">Guardar lote</button></div>'+
         '<div class="reac-ayuda">'+(anterior?'Anterior: <span class="rd-mono">'+escHtml(anterior)+'</span>':'Sin lote anterior')+'</div>'+
       '</div>'+
       '<div>'+
         '<label class="reac-lbl" for="reac-cant">Cartuchos</label>'+
-        '<div style="display:flex;gap:8px"><input class="reac-inp" id="reac-cant" type="number" min="0" step="1" inputmode="numeric" placeholder="0"><button type="button" class="reac-btn pri" onclick="ajustarCantidadReactivo(\'sumar\')">+ Agregar</button><button type="button" class="reac-btn" onclick="ajustarCantidadReactivo(\'fijar\')">Fijar total</button></div>'+
+        '<div style="display:flex;gap:8px"><input class="reac-inp" id="reac-cant" type="number" min="0" step="1" inputmode="numeric" placeholder="0" onkeydown="if(event.key===\'Enter\')ajustarCantidadReactivo(\'sumar\')"><button type="button" class="reac-btn pri"'+dis+' onclick="ajustarCantidadReactivo(\'sumar\')">+ Agregar</button><button type="button" class="reac-btn"'+dis+' onclick="ajustarCantidadReactivo(\'fijar\')">Fijar total</button></div>'+
         '<div class="reac-ayuda">Agregar suma a lo que queda · Fijar total reemplaza el conteo</div>'+
       '</div>'+
     '</div>'+
@@ -1623,7 +1626,7 @@ function cambiarLoteReactivo(){
   var r=REACTIVOS_DATA[REACTIVO_SEL];
   if(!nuevo){ toast('Escribe el lote','err'); return; }
   if(nuevo===r.lote){ toast('Ese ya es el lote actual','info'); return; }
-  guardarCambioReactivo({lote:nuevo},'Lote actualizado ✓');
+  guardarCambioReactivo({lote:nuevo},'Lote '+nuevo+' guardado ✓');
 }
 
 function ajustarCantidadReactivo(modo){
@@ -1631,21 +1634,56 @@ function ajustarCantidadReactivo(modo){
   if(isNaN(v)||v<0){ toast('Escribe una cantidad válida','err'); return; }
   if(modo==='sumar'&&v===0){ toast('Escribe cuántos cartuchos agregas','err'); return; }
   var total=modo==='sumar'?(restanteReactivo(REACTIVOS_DATA[REACTIVO_SEL])||0)+v:v;
-  guardarCambioReactivo({cantidad:total},modo==='sumar'?('+'+v+' cartuchos ✓'):'Cantidad actualizada ✓');
+  var cambios={cantidad:total};
+  // Si escribiste un lote nuevo y no le diste "Guardar lote", se guarda junto con la cantidad
+  var lote=document.getElementById('reac-lote').value.trim();
+  if(lote&&lote!==REACTIVOS_DATA[REACTIVO_SEL].lote) cambios.lote=lote;
+  guardarCambioReactivo(cambios,(modo==='sumar'?('+'+v+' cartuchos'):'Cantidad actualizada')+(cambios.lote?' · lote '+lote:'')+' ✓');
+}
+
+// Mismo cálculo que guardarReactivo en Code.gs, para mostrar el cambio al instante
+function aplicarCambioLocalReactivo(r,cambios){
+  var n=JSON.parse(JSON.stringify(r)), hoy=getFechaHoy();
+  n.historial=n.historial||[];
+  if(cambios.lote!==undefined&&cambios.lote&&cambios.lote!==n.lote){
+    n.historial.forEach(function(h){ if(!h.hasta) h.hasta=hoy; });
+    n.historial.push({lote:cambios.lote,desde:hoy,hasta:''});
+    n.lote=cambios.lote;
+  }
+  if(cambios.cantidad!==undefined&&cambios.cantidad!==null){
+    n.cantidad=Number(cambios.cantidad);
+    n.base=hoy+' '+getHoraActual();
+  }
+  return n;
 }
 
 function guardarCambioReactivo(cambios,msgOk){
-  var clave=REACTIVO_SEL;
-  servidor('guardarReactivo',[clave,cambios],function(res){
-    if(res&&res.success){
-      REACTIVOS_DATA[clave]=res.reactivo;
-      renderReactivos();
-      actualizarBadgeReactivos();
-      toast(msgOk,'ok');
-    } else {
-      toast('Error al guardar'+(res&&res.error?': '+res.error:''),'err');
+  if(REAC_GUARDANDO) return;
+  var clave=REACTIVO_SEL, previo=REACTIVOS_DATA[clave];
+  REAC_GUARDANDO=true;
+  REACTIVOS_DATA[clave]=aplicarCambioLocalReactivo(previo,cambios);
+  renderReactivos();
+  actualizarBadgeReactivos();
+  var q=document.getElementById('reac-quedan');
+  if(q&&cambios.cantidad!==undefined) q.classList.add('reac-pop');
+  toast(msgOk,'ok');
+  function terminar(ok,res){
+    REAC_GUARDANDO=false;
+    REACTIVOS_DATA[clave]=ok?res.reactivo:previo;
+    var lote=document.getElementById('reac-lote'), cant=document.getElementById('reac-cant');
+    var vLote=lote?lote.value:null, vCant=cant?cant.value:null, foco=document.activeElement&&document.activeElement.id;
+    renderReactivos();
+    actualizarBadgeReactivos();
+    if(clave===REACTIVO_SEL){
+      if(vLote!==null&&!ok) document.getElementById('reac-lote').value=vLote;
+      if(vCant!==null) document.getElementById('reac-cant').value=vCant;
+      if(foco==='reac-lote'||foco==='reac-cant') document.getElementById(foco).focus();
     }
-  });
+  }
+  servidor('guardarReactivo',[clave,cambios],function(res){
+    if(res&&res.success) terminar(true,res);
+    else { terminar(false); toast('No se guardó'+(res&&res.error?': '+res.error:''),'err'); }
+  },function(){ terminar(false); });
 }
 
 function actualizarBadgeReactivos(){
