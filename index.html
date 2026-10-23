@@ -284,33 +284,63 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
 .modal-foto-preview{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.14);border:1px solid var(--border);color:var(--text);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:600;font-family:'IBM Plex Mono',monospace;margin:0 auto 10px;overflow:hidden}
 .modal-foto-preview img{width:100%;height:100%;object-fit:cover}
 .reac-wrap{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
-.reac-lista{flex:0 1 320px;min-width:260px;background:var(--card);backdrop-filter:blur(14px);border:1px solid var(--border);border-radius:16px;padding:8px;display:flex;flex-direction:column;gap:2px}
-.reac-item{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:11px 14px;border:none;border-radius:10px;background:none;color:var(--t2);font-family:'Archivo',sans-serif;font-size:12.5px;text-align:left;cursor:pointer}
-.reac-item:hover{background:rgba(255,255,255,.05)}
-.reac-item.on{background:var(--acc-bg);color:var(--text)}
-.reac-pill{font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:600;min-width:26px;text-align:center;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.07);color:var(--text);flex-shrink:0}
-.reac-pill.bajo{background:rgba(245,185,74,.18);color:#f5b94a}
-.reac-pill.critico{background:var(--fail-bg);color:var(--fail)}
+.reac-lista{flex:0 1 300px;min-width:240px;display:flex;flex-direction:column;gap:6px}
+.reac-item{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:46px;padding:0 14px;border:1px solid rgba(255,255,255,.12);border-radius:10px;background:rgba(255,255,255,.03);color:var(--t2);font-family:'Archivo',sans-serif;font-size:13px;text-align:left;cursor:pointer;transition:background .2s,border-color .2s,color .2s}
+.reac-item:hover{background:rgba(255,255,255,.06);color:var(--text)}
+.reac-item.on{background:var(--acc-bg);border-color:var(--acc-border);color:var(--text)}
+.reac-pill{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;color:var(--text);flex-shrink:0}
+.reac-pill.bajo{color:#f5b94a}
+.reac-pill.critico{color:var(--fail)}
 .reac-pill.sin{color:var(--t4)}
-.reac-detalle{flex:999 1 420px;min-width:0;background:var(--card);backdrop-filter:blur(14px);border:1px solid var(--border);border-radius:16px;padding:22px 24px;display:flex;flex-direction:column;gap:20px}
-.reac-stats{display:flex;gap:10px;flex-wrap:wrap}
-.reac-stat{flex:1;min-width:120px;padding:12px 14px;border-radius:11px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12)}
-.reac-stat-lbl,.reac-stat-sub{font-size:10.5px;color:var(--sub)}
-.reac-campos{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
-.reac-lbl{display:block;font-size:10.5px;color:var(--sub);text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px}
-.reac-inp{flex:1;min-width:0;height:38px;box-sizing:border-box;padding:0 12px;border:1px solid var(--border2);border-radius:9px;background:rgba(0,0,0,.28);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:13px;outline:none}
+.reac-detalle{flex:999 1 460px;min-width:0;background:var(--card);backdrop-filter:blur(14px);border:1px solid var(--border);border-radius:16px;padding:24px 26px;display:flex;flex-direction:column;gap:24px}
+.reac-detalle.reac-anim>*{animation:reacRise .45s ease both}
+.reac-detalle.reac-anim>*:nth-child(2){animation-delay:.05s}
+.reac-detalle.reac-anim>*:nth-child(3){animation-delay:.1s}
+.reac-detalle.reac-anim>*:nth-child(4){animation-delay:.15s}
+.reac-detalle.reac-anim>*:nth-child(5){animation-delay:.2s}
+@keyframes reacRise{from{opacity:0;transform:translateY(8px)}}
+@keyframes reacPulse{0%{box-shadow:0 0 0 0 rgba(173,151,247,.7)}100%{box-shadow:0 0 0 8px rgba(173,151,247,0)}}
+.reac-titulo{font-size:17px;font-weight:600}
+.reac-top{display:flex;gap:40px;align-items:center;flex-wrap:wrap}
+.reac-lbl{display:block;font-size:10.5px;color:var(--sub);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+.reac-total{font-family:'IBM Plex Mono',monospace;font-size:72px;font-weight:700;line-height:1}
+.reac-dias{flex:1;min-width:240px;max-width:440px;display:flex;flex-direction:column;gap:10px}
+.reac-dias-txt{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:13px;color:var(--t2)}
+.reac-dias-txt b{font-family:'IBM Plex Mono',monospace;font-size:16px;color:var(--text)}
+.reac-dias-txt b.bajo{color:#f5b94a}
+.reac-dias-txt b.critico{color:var(--fail)}
+.reac-dias-txt span{font-size:12px;color:var(--sub)}
+.reac-bar{height:10px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+.reac-bar-in{height:100%;border-radius:99px;background:var(--acc);transition:width .8s cubic-bezier(.2,.8,.2,1),background .3s}
+.reac-bar-in.bajo{background:#f5b94a}
+.reac-bar-in.critico{background:var(--fail)}
+.reac-form{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.18)}
+.reac-form label{display:block;font-size:11.5px;color:var(--sub);margin-bottom:6px}
+.reac-inp{height:44px;box-sizing:border-box;padding:0 12px;border:1px solid var(--border2);border-radius:9px;background:rgba(0,0,0,.28);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:14px;outline:none}
 .reac-inp:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-bg)}
-.reac-btn{height:38px;padding:0 14px;border-radius:9px;border:1px solid var(--border2);background:rgba(255,255,255,.04);color:var(--text);font-family:'Archivo',sans-serif;font-size:12px;cursor:pointer;white-space:nowrap}
+.reac-btn{height:44px;padding:0 18px;border-radius:9px;border:1px solid var(--border2);background:rgba(255,255,255,.04);color:var(--text);font-family:'Archivo',sans-serif;font-size:13px;cursor:pointer;white-space:nowrap}
 .reac-btn:hover{border-color:var(--acc)}
-.reac-btn:disabled{opacity:.5;cursor:default}
-.reac-pop{display:inline-block;animation:kpiNumPop .4s ease}
 .reac-btn.pri{background:#f7f7f8;color:#0c0c0d;border-color:#f7f7f8;font-weight:700}
-.reac-ayuda{font-size:10.5px;color:var(--sub);margin-top:6px}
-.reac-hist{border:1px solid rgba(255,255,255,.12);border-radius:11px;overflow:hidden}
-.reac-hist-row{display:flex;justify-content:space-between;gap:10px;padding:10px 14px;border-top:1px solid rgba(255,255,255,.08);font-size:11.5px;color:var(--sub)}
-.reac-hist-row:first-child{border-top:none}
-.reac-hist-row.actual{background:var(--acc-bg)}
-.reac-hist-row .rd-mono{font-size:12.5px;color:var(--text)}
+.reac-chips{display:flex;gap:10px;flex-wrap:wrap}
+.reac-chip{height:48px;border-radius:99px;display:flex;align-items:center;gap:2px;border:1px solid var(--border2);background:transparent;transition:all .25s ease}
+.reac-chip:hover{border-color:var(--acc-border)}
+.reac-chip.on{border:2px solid var(--acc);background:rgba(173,151,247,.14)}
+.reac-chip.agotado{opacity:.5}
+.reac-chip-main{height:100%;display:flex;align-items:center;gap:10px;padding:0 4px 0 18px;border:0;background:transparent;color:var(--text);font-family:'Archivo',sans-serif;font-size:13px;cursor:pointer}
+.reac-chip-n{font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:700;padding-left:10px;border-left:1px solid rgba(255,255,255,.18)}
+.reac-dot{width:9px;height:9px;border-radius:99px;border:1.5px solid rgba(255,255,255,.35);box-sizing:border-box}
+.reac-chip.on .reac-dot{background:var(--acc);border:0;animation:reacPulse 1.6s ease-out infinite}
+.reac-chip-edit{width:40px;height:40px;margin-right:4px;border-radius:99px;border:0;background:transparent;color:var(--sub);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.reac-chip-edit:hover{color:var(--text);background:rgba(255,255,255,.06)}
+.reac-chip.editando{padding:0 6px 0 18px;gap:10px;border:2px solid #f7f7f8;background:rgba(255,255,255,.06)}
+.reac-chip.editando .reac-inp{width:76px;height:34px;font-size:15px;padding:0 8px}
+.reac-chip.editando .reac-btn{height:36px;padding:0 14px;border-radius:99px}
+.reac-vacio{font-size:12.5px;color:var(--sub)}
+.reac-hist{display:flex;flex-direction:column;gap:4px}
+.reac-hist-row{display:flex;justify-content:space-between;gap:10px;padding:9px 12px;border-radius:8px;background:rgba(255,255,255,.03);font-size:12.5px;color:var(--t4)}
+.reac-hist-row.activo{color:var(--t2)}
+.reac-hist-row.actual{background:rgba(173,151,247,.08);color:var(--t2)}
+.reac-hist-row .rd-mono{color:var(--text)}
 .reac-badge{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:#1a1208;background:#f5b94a;border-radius:999px;padding:1px 7px}
 
 #modal-rechazar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:998;display:none}
@@ -358,7 +388,7 @@ main{max-width:1100px;margin:0 auto;padding:1.5rem}
 <div id="app-shell">
   <aside id="sidebar">
     <div class="sb-brand">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f7f7f8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v6.5L4 18a2 2 0 0 0 1.8 3h12.4a2 2 0 0 0 1.8-3l-5-9.5V2"></path><line x1="8" y1="2" x2="16" y2="2"></line><line x1="7" y1="14" x2="17" y2="14"></line></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="1.8" height="14" rx="0.5" fill="#AD97F7"/><rect x="7.4" y="5" width="1.8" height="14" rx="0.5" fill="#AD97F7"/><rect x="10.8" y="5" width="3.4" height="14" rx="0.5" fill="#AD97F7"/><rect x="16" y="5" width="1.8" height="14" rx="0.5" fill="#AD97F7"/><rect x="19.4" y="5" width="1.8" height="14" rx="0.5" fill="#AD97F7"/></svg>
       <div>Registro de muestras</div>
     </div>
     <nav class="sb-nav">
@@ -1464,9 +1494,9 @@ function guardarPerfilCliente(){
 }
 
 // ---------- Mis reactivos (cartuchos de inmunocromatografía) ----------
-// Cada reactivo guarda una cantidad y el momento en que se capturó ("base"). Lo que queda
-// es esa cantidad menos las pruebas de ese reactivo registradas después de la base,
-// contadas igual que en "Pruebas del día" (calcStatsFromList).
+// Cada reactivo guarda sus lotes con la cantidad que tenían en la "base" (último guardado).
+// Las pruebas registradas después de la base se descuentan primero del lote en uso y, si se
+// acaba, del siguiente lote en piso. Se cuentan igual que en "Pruebas del día" (calcStatsFromList).
 var REACTIVOS_DEF=[
   {clave:'HELIH',nombre:'Helicobacter'},
   {clave:'ROTA_ADENO_ASTRO',nombre:'Rotavirus + Adenovirus + Astrovirus'},
@@ -1476,12 +1506,17 @@ var REACTIVOS_DEF=[
   {clave:'CLOSTRIDIUM',nombre:'Clostridium'},
   {clave:'FOB_TRANSF',nombre:'FOB + Trans'}
 ];
-var REACTIVO_UMBRAL_CRITICO=2;
-var REACTIVO_UMBRAL_BAJO=5;
+var REACTIVO_UMBRAL_CRITICO=2, REACTIVO_UMBRAL_BAJO=5;          // cartuchos
+var REACTIVO_DIAS_CRITICO=3, REACTIVO_DIAS_BAJO=7;              // días que alcanza
+var REACTIVO_DIAS_PROMEDIO=30;                                  // ventana para el consumo diario
 var REACTIVOS_DATA=null;
 var REACTIVO_SEL=REACTIVOS_DEF[0].clave;
-var REAC_MUESTRAS_EXTRA=[]; var REAC_GUARDANDO=false; // meses más viejos que los 3 que ya carga cargarMuestras()
+var REAC_MUESTRAS_EXTRA=[]; // meses más viejos que los 3 que ya carga cargarMuestras()
 var REAC_MESES_EXTRA={};
+var REAC_FORM={lote:null,cant:''}; // lote null = mostrar el lote en uso
+var REAC_EDIT=null;                // lote cuya cantidad se está corrigiendo
+var REAC_VISTA=null;               // lotes en piso tal como se pintaron (para los onclick)
+var REAC_ULT_CLAVE=null, REAC_TOTAL_PREV={}, REAC_BAR_PREV={}, REAC_SEQ=0;
 
 function escHtml(s){
   return String(s==null?'':s).replace(/[&<>"']/g,function(c){
@@ -1500,7 +1535,7 @@ function cargarReactivos(){
     if(!res||!res.success){ mostrarErrorReactivos(res&&res.error?res.error:'El servidor no respondió'); return; }
     REACTIVOS_DATA={};
     REACTIVOS_DEF.forEach(function(d){
-      REACTIVOS_DATA[d.clave]={clave:d.clave,lote:'',cantidad:null,base:'',historial:[]};
+      REACTIVOS_DATA[d.clave]={clave:d.clave,enUso:'',base:'',lotes:[]};
     });
     (res.reactivos||[]).forEach(function(r){ if(REACTIVOS_DATA[r.clave]) REACTIVOS_DATA[r.clave]=r; });
     asegurarMesesReactivos(function(){
@@ -1520,7 +1555,7 @@ function mostrarErrorReactivos(msg){
     '<button type="button" class="reac-btn" style="margin-top:10px" onclick="cargarReactivos()">Reintentar</button></div>';
 }
 
-// Si alguna cantidad se capturó hace más de 3 meses, trae esos meses para no contar de menos.
+// Si alguna base es de hace más de 3 meses, trae esos meses para no contar de menos.
 function asegurarMesesReactivos(cb){
   var bases=Object.keys(REACTIVOS_DATA).map(function(k){return REACTIVOS_DATA[k].base;}).filter(Boolean).sort();
   if(!bases.length){ cb(); return; }
@@ -1541,28 +1576,12 @@ function asegurarMesesReactivos(cb){
   },function(){ cb(); });
 }
 
-function tieneCantidadReactivo(r){
-  return r.cantidad!==null&&r.cantidad!==undefined&&r.cantidad!==''&&!!r.base;
-}
+function normLote(s){ return String(s||'').trim().toUpperCase().replace(/\s+/g,''); }
 
-function usadosReactivo(r){
-  if(!tieneCantidadReactivo(r)) return 0;
-  var lista=REGISTRO.concat(REAC_MUESTRAS_EXTRA).filter(function(m){
-    return (m.fecha+' '+(m.hora||'00:00:00'))>r.base;
-  });
-  return calcStatsFromList(lista)[r.clave]||0;
-}
-
-function restanteReactivo(r){
-  if(!tieneCantidadReactivo(r)) return null;
-  return Math.max(0,Number(r.cantidad)-usadosReactivo(r));
-}
-
-function estadoReactivo(rest){
-  if(rest===null) return 'sin';
-  if(rest<=REACTIVO_UMBRAL_CRITICO) return 'critico';
-  if(rest<=REACTIVO_UMBRAL_BAJO) return 'bajo';
-  return '';
+function sumarDiasFecha(fecha,n){
+  var p=fecha.split('-');
+  var d=new Date(Date.UTC(+p[0],+p[1]-1,+p[2]+n));
+  return d.getUTCFullYear()+'-'+String(d.getUTCMonth()+1).padStart(2,'0')+'-'+String(d.getUTCDate()).padStart(2,'0');
 }
 
 function fmtFechaReac(fecha){
@@ -1571,125 +1590,252 @@ function fmtFechaReac(fecha){
   return parseInt(p[2],10)+' '+NOMBRES_MES_CORTO[parseInt(p[1],10)-1].toLowerCase();
 }
 
+function usadosReactivo(r){
+  if(!r.base) return 0;
+  var lista=REGISTRO.concat(REAC_MUESTRAS_EXTRA).filter(function(m){
+    return (m.fecha+' '+(m.hora||'00:00:00'))>r.base;
+  });
+  return calcStatsFromList(lista)[r.clave]||0;
+}
+
+// Lotes en piso con lo que les queda hoy. Orden de pantalla: del más viejo al más nuevo.
+function vistaReactivo(r){
+  var activos=(r.lotes||[]).filter(function(l){return !l.hasta;})
+    .map(function(l){return {lote:l.lote,desde:l.desde,quedan:Number(l.cantidad)||0};})
+    .sort(function(a,b){return a.desde<b.desde?-1:a.desde>b.desde?1:0;});
+  var orden=activos.filter(function(l){return l.lote===r.enUso;})
+    .concat(activos.filter(function(l){return l.lote!==r.enUso;}));
+  var u=usadosReactivo(r);
+  orden.forEach(function(l){ var q=Math.min(l.quedan,u); l.quedan-=q; u-=q; });
+  var uso=orden.filter(function(l){return l.quedan>0;})[0]||orden[0];
+  return {
+    activos:activos,
+    enUso:uso?uso.lote:'',
+    total:activos.reduce(function(s,l){return s+l.quedan;},0)
+  };
+}
+
+function promedioDiarioReactivo(clave){
+  var desde=sumarDiasFecha(getFechaHoy(),-(REACTIVO_DIAS_PROMEDIO-1));
+  var lista=REGISTRO.filter(function(m){return m.fecha>=desde;});
+  return (calcStatsFromList(lista)[clave]||0)/REACTIVO_DIAS_PROMEDIO;
+}
+
+function diasReactivo(clave,total){
+  var p=promedioDiarioReactivo(clave);
+  return p>0?Math.floor(total/p):null;
+}
+
+function estadoReactivo(r){
+  var v=vistaReactivo(r);
+  if(!v.activos.length) return 'sin';
+  var d=diasReactivo(r.clave,v.total);
+  if(v.total<=REACTIVO_UMBRAL_CRITICO||(d!==null&&d<=REACTIVO_DIAS_CRITICO)) return 'critico';
+  if(v.total<=REACTIVO_UMBRAL_BAJO||(d!==null&&d<=REACTIVO_DIAS_BAJO)) return 'bajo';
+  return '';
+}
+
 function renderReactivos(){
   if(!REACTIVOS_DATA) return;
   document.getElementById('reac-lista').innerHTML=REACTIVOS_DEF.map(function(d){
-    var rest=restanteReactivo(REACTIVOS_DATA[d.clave]);
+    var r=REACTIVOS_DATA[d.clave], v=vistaReactivo(r);
     return '<button type="button" class="reac-item'+(d.clave===REACTIVO_SEL?' on':'')+'" onclick="seleccionarReactivo(\''+d.clave+'\')">'+
       '<span>'+d.nombre+'</span>'+
-      '<span class="reac-pill '+estadoReactivo(rest)+'">'+(rest===null?'—':rest)+'</span>'+
+      '<span class="reac-pill '+estadoReactivo(r)+'">'+(v.activos.length?v.total:'—')+'</span>'+
     '</button>';
   }).join('');
   renderDetalleReactivo();
 }
 
 function seleccionarReactivo(clave){
+  if(clave!==REACTIVO_SEL){ REAC_FORM={lote:null,cant:''}; REAC_EDIT=null; }
   REACTIVO_SEL=clave;
   renderReactivos();
 }
 
+var ICONO_LAPIZ='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>';
+
 function renderDetalleReactivo(){
-  var def=REACTIVOS_DEF.filter(function(d){return d.clave===REACTIVO_SEL;})[0];
-  var r=REACTIVOS_DATA[REACTIVO_SEL];
-  var conCantidad=tieneCantidadReactivo(r);
-  var rest=restanteReactivo(r);
-  var est=estadoReactivo(rest);
-  var colorRest=est==='critico'?'var(--fail)':(est==='bajo'?'#f5b94a':'var(--text)');
-  var hist=(r.historial||[]).slice().reverse();
-  var anterior=hist.length>1?hist[1].lote:'';
-  var dis=REAC_GUARDANDO?' disabled':'';
-  var baseTxt=conCantidad?fmtFechaReac(r.base)+', '+segundosAHora12(horaASegundos(r.base.substring(11))):'';
+  var clave=REACTIVO_SEL;
+  var def=REACTIVOS_DEF.filter(function(d){return d.clave===clave;})[0];
+  var r=REACTIVOS_DATA[clave], v=vistaReactivo(r), est=estadoReactivo(r);
+  var d=v.activos.length?diasReactivo(clave,v.total):null;
+  var pct=d===null?0:Math.min(100,Math.round(d/30*100));
+  var diasTxt=d===null?'—':(d+(d===1?' día':' días'));
+  var finTxt=d===null?'':'~'+fmtFechaReac(sumarDiasFecha(getFechaHoy(),d));
+  var loteForm=REAC_FORM.lote===null?v.enUso:REAC_FORM.lote;
+  REAC_VISTA=v.activos;
 
-  var histHtml=hist.length?hist.map(function(h){
-    var rango=h.hasta?(fmtFechaReac(h.desde)+' – '+fmtFechaReac(h.hasta)):('desde '+fmtFechaReac(h.desde)+' · actual');
-    return '<div class="reac-hist-row'+(h.hasta?'':' actual')+'"><span class="rd-mono">'+escHtml(h.lote)+'</span><span>'+rango+'</span></div>';
-  }).join(''):'<div class="reac-hist-row">Aún no hay lotes registrados.</div>';
+  var chips=v.activos.map(function(l,i){
+    if(REAC_EDIT===l.lote){
+      return '<div class="reac-chip editando"><span class="rd-mono" style="font-weight:700;font-size:13px">'+escHtml(l.lote)+'</span>'+
+        '<input class="reac-inp" id="reac-edit-cant" type="number" min="0" step="1" inputmode="numeric" aria-label="Cantidad real" value="'+l.quedan+'" onkeydown="if(event.key===\'Enter\')guardarEdicionReactivo();if(event.key===\'Escape\')cancelarEdicionReactivo()">'+
+        '<button type="button" class="reac-btn pri" onclick="guardarEdicionReactivo()">Guardar</button>'+
+        '<button type="button" class="reac-chip-edit" aria-label="Cancelar" onclick="cancelarEdicionReactivo()">×</button></div>';
+    }
+    var on=l.lote===v.enUso;
+    return '<div class="reac-chip'+(on?' on':'')+(l.quedan===0?' agotado':'')+'">'+
+      '<button type="button" class="reac-chip-main" onclick="usarLoteReactivo('+i+')"><span class="reac-dot"></span><span class="rd-mono" style="font-weight:700">'+escHtml(l.lote)+'</span><span class="reac-chip-n">'+l.quedan+'</span></button>'+
+      '<button type="button" class="reac-chip-edit" aria-label="Corregir cantidad de '+escHtml(l.lote)+'" onclick="editarLoteReactivo('+i+')">'+ICONO_LAPIZ+'</button></div>';
+  }).join('');
 
-  document.getElementById('reac-detalle').innerHTML=
-    '<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap">'+
-      '<div style="font-size:16px;font-weight:600">'+def.nombre+'</div>'+
-      '<div style="font-size:11.5px;color:var(--sub)">'+(conCantidad?'Último ajuste: '+baseTxt:'Aún sin cantidad registrada')+'</div>'+
-    '</div>'+
-    '<div class="reac-stats">'+
-      '<div class="reac-stat"><div class="reac-stat-lbl">Quedan</div><div class="rd-mono" id="reac-quedan" style="font-size:30px;font-weight:700;margin-top:2px;color:'+colorRest+'">'+(conCantidad?rest:'—')+'</div></div>'+
-      '<div class="reac-stat"><div class="reac-stat-lbl">Cargaste</div><div class="rd-mono" style="font-size:20px;font-weight:600;margin-top:8px">'+(conCantidad?r.cantidad:'—')+'</div><div class="reac-stat-sub">'+(conCantidad?'el '+fmtFechaReac(r.base):'')+'</div></div>'+
-      '<div class="reac-stat"><div class="reac-stat-lbl">Usados (auto)</div><div class="rd-mono" style="font-size:20px;font-weight:600;margin-top:8px">'+(conCantidad?'−'+usadosReactivo(r):'—')+'</div><div class="reac-stat-sub">según estadísticas</div></div>'+
-    '</div>'+
-    '<div class="reac-campos">'+
-      '<div>'+
-        '<label class="reac-lbl" for="reac-lote">Lote actual</label>'+
-        '<div style="display:flex;gap:8px"><input class="reac-inp" id="reac-lote" value="'+escHtml(r.lote)+'" placeholder="Ej. HP2409A" autocomplete="off" onkeydown="if(event.key===\'Enter\')cambiarLoteReactivo()"><button type="button" class="reac-btn"'+dis+' onclick="cambiarLoteReactivo()">Guardar lote</button></div>'+
-        '<div class="reac-ayuda">'+(anterior?'Anterior: <span class="rd-mono">'+escHtml(anterior)+'</span>':'Sin lote anterior')+'</div>'+
+  var filas=(r.lotes||[]).slice().sort(function(a,b){return a.desde<b.desde?1:a.desde>b.desde?-1:0;}).map(function(l){
+    var antes=(l.antes||[]).map(function(p){return fmtFechaReac(p.desde)+' – '+fmtFechaReac(p.hasta);}).join(', ');
+    var txt=l.hasta?(fmtFechaReac(l.desde)+' – '+fmtFechaReac(l.hasta)):('desde '+fmtFechaReac(l.desde)+(l.lote===v.enUso?' · en uso':' · en piso'));
+    if(antes) txt+=' · antes '+antes;
+    var cls=l.hasta?'':(l.lote===v.enUso?' actual':' activo');
+    return '<div class="reac-hist-row'+cls+'"><span class="rd-mono">'+escHtml(l.lote)+'</span><span>'+txt+'</span></div>';
+  }).join('');
+  var nombres={};
+  (r.lotes||[]).forEach(function(l){ nombres[l.lote]=1; });
+
+  var det=document.getElementById('reac-detalle');
+  det.className='reac-detalle'+(REAC_ULT_CLAVE!==clave?' reac-anim':'');
+  det.innerHTML=
+    '<div class="reac-titulo">'+def.nombre+'</div>'+
+    '<div class="reac-top">'+
+      '<div><span class="reac-lbl">En piso</span><div class="reac-total" id="reac-total">'+(v.activos.length?v.total:'—')+'</div></div>'+
+      '<div class="reac-dias">'+
+        '<div class="reac-dias-txt">Alcanza para <b class="'+est+'" style="margin-right:auto">'+diasTxt+'</b><span>'+finTxt+'</span></div>'+
+        '<div class="reac-bar"><div class="reac-bar-in '+est+'" id="reac-bar" style="width:'+(REAC_BAR_PREV[clave]!==undefined?REAC_BAR_PREV[clave]:0)+'%"></div></div>'+
       '</div>'+
-      '<div>'+
-        '<label class="reac-lbl" for="reac-cant">Cartuchos</label>'+
-        '<div style="display:flex;gap:8px"><input class="reac-inp" id="reac-cant" type="number" min="0" step="1" inputmode="numeric" placeholder="0" onkeydown="if(event.key===\'Enter\')ajustarCantidadReactivo(\'sumar\')"><button type="button" class="reac-btn pri"'+dis+' onclick="ajustarCantidadReactivo(\'sumar\')">+ Agregar</button><button type="button" class="reac-btn"'+dis+' onclick="ajustarCantidadReactivo(\'fijar\')">Fijar total</button></div>'+
-        '<div class="reac-ayuda">Agregar suma a lo que queda · Fijar total reemplaza el conteo</div>'+
-      '</div>'+
     '</div>'+
-    '<div><span class="reac-lbl">Historial de lotes</span><div class="reac-hist">'+histHtml+'</div></div>';
+    '<div class="reac-form">'+
+      '<div><label for="reac-n-lote">Lote</label><input class="reac-inp" id="reac-n-lote" list="reac-lotes-dl" style="width:200px" autocomplete="off" placeholder="Ej. HP2412C" value="'+escHtml(loteForm)+'" oninput="REAC_FORM.lote=this.value" onkeydown="if(event.key===\'Enter\')agregarLoteReactivo()"></div>'+
+      '<div><label for="reac-n-cant">Cartuchos</label><input class="reac-inp" id="reac-n-cant" type="number" min="1" step="1" inputmode="numeric" style="width:110px" placeholder="0" value="'+escHtml(REAC_FORM.cant)+'" oninput="REAC_FORM.cant=this.value" onkeydown="if(event.key===\'Enter\')agregarLoteReactivo()"></div>'+
+      '<button type="button" class="reac-btn pri" onclick="agregarLoteReactivo()">+ Agregar</button>'+
+      '<datalist id="reac-lotes-dl">'+Object.keys(nombres).map(function(n){return '<option value="'+escHtml(n)+'">';}).join('')+'</datalist>'+
+    '</div>'+
+    '<div><span class="reac-lbl">Lotes en piso</span>'+(chips?'<div class="reac-chips">'+chips+'</div>':'<div class="reac-vacio">Sin lotes en piso</div>')+'</div>'+
+    (filas?'<div><span class="reac-lbl">Historial de lotes</span><div class="reac-hist">'+filas+'</div></div>':'');
+  REAC_ULT_CLAVE=clave;
+
+  // Animaciones: la barra crece desde donde estaba y el total cuenta hasta el nuevo valor.
+  requestAnimationFrame(function(){
+    var bar=document.getElementById('reac-bar');
+    if(bar) bar.style.width=pct+'%';
+  });
+  REAC_BAR_PREV[clave]=pct;
+  if(v.activos.length) animarTotalReactivo(clave,v.total);
+  var ed=document.getElementById('reac-edit-cant');
+  if(ed){ ed.focus(); ed.select(); }
 }
 
-function cambiarLoteReactivo(){
-  var nuevo=document.getElementById('reac-lote').value.trim();
-  var r=REACTIVOS_DATA[REACTIVO_SEL];
-  if(!nuevo){ toast('Escribe el lote','err'); return; }
-  if(nuevo===r.lote){ toast('Ese ya es el lote actual','info'); return; }
-  guardarCambioReactivo({lote:nuevo},'Lote '+nuevo+' guardado ✓');
+function animarTotalReactivo(clave,hasta){
+  var el=document.getElementById('reac-total');
+  var desde=REAC_TOTAL_PREV[clave];
+  REAC_TOTAL_PREV[clave]=hasta;
+  if(!el||desde===undefined||desde===hasta) return;
+  var t0=null;
+  function paso(t){
+    if(!t0) t0=t;
+    var k=Math.min(1,(t-t0)/600), e=1-Math.pow(1-k,3);
+    if(REACTIVO_SEL!==clave||!document.body.contains(el)) return;
+    el.textContent=Math.round(desde+(hasta-desde)*e);
+    if(k<1) requestAnimationFrame(paso);
+  }
+  el.textContent=desde;
+  requestAnimationFrame(paso);
 }
 
-function ajustarCantidadReactivo(modo){
-  var v=parseInt(document.getElementById('reac-cant').value,10);
+// Copia del reactivo con lo usado ya descontado de cada lote, lista para guardar.
+// Los lotes que llegaron a 0 se cierran hoy.
+function materializarReactivo(r){
+  var v=vistaReactivo(r), hoy=getFechaHoy();
+  var quedan={};
+  v.activos.forEach(function(l){ quedan[l.lote]=l.quedan; });
+  var lotes=(r.lotes||[]).map(function(l){
+    var n={lote:l.lote,cantidad:Number(l.cantidad)||0,desde:l.desde,hasta:l.hasta||'',antes:(l.antes||[]).slice()};
+    if(!n.hasta){ n.cantidad=quedan[n.lote]||0; if(n.cantidad===0) n.hasta=hoy; }
+    return n;
+  });
+  return {clave:r.clave,enUso:v.enUso,base:hoy+' '+getHoraActual(),lotes:lotes};
+}
+
+function corregirEnUsoReactivo(m){
+  var activos=m.lotes.filter(function(l){return !l.hasta;});
+  if(!activos.some(function(l){return l.lote===m.enUso;})){
+    activos.sort(function(a,b){return a.desde<b.desde?-1:a.desde>b.desde?1:0;});
+    m.enUso=activos.length?activos[0].lote:'';
+  }
+}
+
+function agregarLoteReactivo(){
+  var nombre=String(document.getElementById('reac-n-lote').value||'').trim().toUpperCase();
+  var v=parseInt(document.getElementById('reac-n-cant').value,10);
+  if(!nombre){ toast('Escribe el lote','err'); return; }
+  if(isNaN(v)||v<=0){ toast('Escribe cuántos cartuchos','err'); return; }
+  var m=materializarReactivo(REACTIVOS_DATA[REACTIVO_SEL]), hoy=getFechaHoy(), msg;
+  var l=m.lotes.filter(function(x){return normLote(x.lote)===normLote(nombre);})[0];
+  if(l&&!l.hasta){
+    l.cantidad+=v; msg='+'+v+' a '+l.lote+' ✓';
+  } else if(l){
+    // El mismo lote regresó del almacén: se reabre en vez de duplicarlo.
+    // Si se cerró hoy mismo, solo se reabre el mismo periodo.
+    if(l.hasta!==hoy){ l.antes.push({desde:l.desde,hasta:l.hasta}); l.desde=hoy; }
+    l.hasta=''; l.cantidad=v; msg='Lote '+l.lote+' de nuevo en piso · '+v+' ✓';
+  } else {
+    l={lote:nombre,cantidad:v,desde:hoy,hasta:'',antes:[]};
+    m.lotes.push(l); msg='Lote '+nombre+' agregado · '+v+' ✓';
+  }
+  if(!m.enUso) m.enUso=l.lote;
+  corregirEnUsoReactivo(m);
+  REAC_FORM={lote:null,cant:''};
+  guardarReactivoCliente(m,msg);
+}
+
+function usarLoteReactivo(i){
+  var l=REAC_VISTA&&REAC_VISTA[i];
+  if(!l) return;
+  var r=REACTIVOS_DATA[REACTIVO_SEL];
+  if(vistaReactivo(r).enUso===l.lote) return;
+  if(l.quedan===0){ toast('Ese lote ya no tiene cartuchos','info'); return; }
+  var m=materializarReactivo(r);
+  m.enUso=l.lote;
+  REAC_FORM.lote=null;
+  guardarReactivoCliente(m,l.lote+' en uso ✓');
+}
+
+function editarLoteReactivo(i){
+  var l=REAC_VISTA&&REAC_VISTA[i];
+  if(!l) return;
+  REAC_EDIT=l.lote;
+  renderDetalleReactivo();
+}
+
+function cancelarEdicionReactivo(){
+  REAC_EDIT=null;
+  renderDetalleReactivo();
+}
+
+function guardarEdicionReactivo(){
+  var v=parseInt(document.getElementById('reac-edit-cant').value,10);
   if(isNaN(v)||v<0){ toast('Escribe una cantidad válida','err'); return; }
-  if(modo==='sumar'&&v===0){ toast('Escribe cuántos cartuchos agregas','err'); return; }
-  var total=modo==='sumar'?(restanteReactivo(REACTIVOS_DATA[REACTIVO_SEL])||0)+v:v;
-  var cambios={cantidad:total};
-  // Si escribiste un lote nuevo y no le diste "Guardar lote", se guarda junto con la cantidad
-  var lote=document.getElementById('reac-lote').value.trim();
-  if(lote&&lote!==REACTIVOS_DATA[REACTIVO_SEL].lote) cambios.lote=lote;
-  guardarCambioReactivo(cambios,(modo==='sumar'?('+'+v+' cartuchos'):'Cantidad actualizada')+(cambios.lote?' · lote '+lote:'')+' ✓');
+  var nombre=REAC_EDIT, hoy=getFechaHoy();
+  var m=materializarReactivo(REACTIVOS_DATA[REACTIVO_SEL]);
+  var l=m.lotes.filter(function(x){return x.lote===nombre&&(!x.hasta||x.hasta===hoy);})[0];
+  REAC_EDIT=null;
+  if(!l){ renderDetalleReactivo(); return; }
+  l.cantidad=v;
+  l.hasta=v===0?(l.hasta||hoy):'';
+  corregirEnUsoReactivo(m);
+  guardarReactivoCliente(m,nombre+(v===0?' terminado ✓':' corregido a '+v+' ✓'));
 }
 
-// Mismo cálculo que guardarReactivo en Code.gs, para mostrar el cambio al instante
-function aplicarCambioLocalReactivo(r,cambios){
-  var n=JSON.parse(JSON.stringify(r)), hoy=getFechaHoy();
-  n.historial=n.historial||[];
-  if(cambios.lote!==undefined&&cambios.lote&&cambios.lote!==n.lote){
-    n.historial.forEach(function(h){ if(!h.hasta) h.hasta=hoy; });
-    n.historial.push({lote:cambios.lote,desde:hoy,hasta:''});
-    n.lote=cambios.lote;
-  }
-  if(cambios.cantidad!==undefined&&cambios.cantidad!==null){
-    n.cantidad=Number(cambios.cantidad);
-    n.base=hoy+' '+getHoraActual();
-  }
-  return n;
-}
-
-function guardarCambioReactivo(cambios,msgOk){
-  if(REAC_GUARDANDO) return;
-  var clave=REACTIVO_SEL, previo=REACTIVOS_DATA[clave];
-  REAC_GUARDANDO=true;
-  REACTIVOS_DATA[clave]=aplicarCambioLocalReactivo(previo,cambios);
+// Se pinta al instante y se guarda en segundo plano; si falla, regresa a como estaba.
+function guardarReactivoCliente(m,msgOk){
+  var clave=m.clave, previo=REACTIVOS_DATA[clave], seq=++REAC_SEQ;
+  REACTIVOS_DATA[clave]=m;
   renderReactivos();
   actualizarBadgeReactivos();
-  var q=document.getElementById('reac-quedan');
-  if(q&&cambios.cantidad!==undefined) q.classList.add('reac-pop');
   toast(msgOk,'ok');
   function terminar(ok,res){
-    REAC_GUARDANDO=false;
+    if(seq!==REAC_SEQ) return; // ya hay un cambio más nuevo en pantalla
     REACTIVOS_DATA[clave]=ok?res.reactivo:previo;
-    var lote=document.getElementById('reac-lote'), cant=document.getElementById('reac-cant');
-    var vLote=lote?lote.value:null, vCant=cant?cant.value:null, foco=document.activeElement&&document.activeElement.id;
     renderReactivos();
     actualizarBadgeReactivos();
-    if(clave===REACTIVO_SEL){
-      if(vLote!==null&&!ok) document.getElementById('reac-lote').value=vLote;
-      if(vCant!==null) document.getElementById('reac-cant').value=vCant;
-      if(foco==='reac-lote'||foco==='reac-cant') document.getElementById(foco).focus();
-    }
   }
-  servidor('guardarReactivo',[clave,cambios],function(res){
+  servidor('guardarReactivo',[clave,{enUso:m.enUso,base:m.base,lotes:m.lotes}],function(res){
     if(res&&res.success) terminar(true,res);
     else { terminar(false); toast('No se guardó'+(res&&res.error?': '+res.error:''),'err'); }
   },function(){ terminar(false); });
@@ -1699,7 +1845,7 @@ function actualizarBadgeReactivos(){
   var b=document.getElementById('reac-badge');
   if(!b||!REACTIVOS_DATA) return;
   var n=REACTIVOS_DEF.filter(function(d){
-    var e=estadoReactivo(restanteReactivo(REACTIVOS_DATA[d.clave]));
+    var e=estadoReactivo(REACTIVOS_DATA[d.clave]);
     return e==='bajo'||e==='critico';
   }).length;
   b.textContent=n;
