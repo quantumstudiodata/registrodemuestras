@@ -779,3 +779,88 @@ function getAnalisisHistorico() {
     return { success: false, error: err.message };
   }
 }
+
+// ---------- Mis reactivos ----------
+// Una fila por reactivo: Clave | Lote | Cantidad | Base | Historial (JSON de lotes).
+// "Base" es la fecha-hora en que se capturó la cantidad; el cliente descuenta las
+// pruebas registradas después de ese momento.
+var SHEET_REACTIVOS = 'Reactivos';
+
+function getOrCreateReactivosSheet_() {
+  var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var sh = ss.getSheetByName(SHEET_REACTIVOS);
+  if (!sh) {
+    sh = ss.insertSheet(SHEET_REACTIVOS);
+    // Texto plano, para que Sheets no convierta lotes a número ni la base a fecha.
+    sh.getRange('A:E').setNumberFormat('@');
+    sh.appendRow(['Clave', 'Lote', 'Cantidad', 'Base', 'Historial']);
+    sh.getRange(1, 1, 1, 5).setFontWeight('bold');
+  }
+  return sh;
+}
+
+function filaAReactivo_(row) {
+  var historial = [];
+  try { historial = JSON.parse(String(row[4] || '[]')); } catch (e) {}
+  var base = row[3] instanceof Date ? Utilities.formatDate(row[3], TZ, 'yyyy-MM-dd HH:mm:ss') : String(row[3] || '');
+  return {
+    clave: String(row[0]),
+    lote: String(row[1] || ''),
+    cantidad: (row[2] === '' || row[2] === null) ? null : Number(row[2]),
+    base: base,
+    historial: historial
+  };
+}
+
+function getReactivos() {
+  try {
+    var data = getOrCreateReactivosSheet_().getDataRange().getValues();
+    var reactivos = [];
+    for (var r = 1; r < data.length; r++) {
+      if (data[r][0]) reactivos.push(filaAReactivo_(data[r]));
+    }
+    return { success: true, reactivos: reactivos };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+function guardarReactivo(clave, cambios) {
+  try {
+    cambios = cambios || {};
+    var sh = getOrCreateReactivosSheet_();
+    var data = sh.getDataRange().getValues();
+    var fila = -1;
+    for (var r = 1; r < data.length; r++) {
+      if (String(data[r][0]) === String(clave)) { fila = r + 1; break; }
+    }
+    var actual = fila === -1
+      ? { clave: String(clave), lote: '', cantidad: null, base: '', historial: [] }
+      : filaAReactivo_(data[fila - 1]);
+    var t = getNow();
+
+    if (cambios.lote !== undefined) {
+      var nuevo = String(cambios.lote || '').trim();
+      if (nuevo && nuevo !== actual.lote) {
+        actual.historial.forEach(function(h) { if (!h.hasta) h.hasta = t.fecha; });
+        actual.historial.push({ lote: nuevo, desde: t.fecha, hasta: '' });
+        actual.lote = nuevo;
+      }
+    }
+
+    if (cambios.cantidad !== undefined && cambios.cantidad !== null && cambios.cantidad !== '') {
+      var cant = Math.round(Number(cambios.cantidad));
+      if (isNaN(cant) || cant < 0) return { success: false, error: 'Cantidad inválida' };
+      actual.cantidad = cant;
+      actual.base = t.fecha + ' ' + t.hora;
+    }
+
+    var row = [actual.clave, actual.lote, actual.cantidad === null ? '' : String(actual.cantidad), actual.base, JSON.stringify(actual.historial)];
+    if (fila === -1) sh.appendRow(row);
+    else sh.getRange(fila, 1, 1, 5).setValues([row]);
+
+    return { success: true, reactivo: actual };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
