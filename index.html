@@ -1495,7 +1495,7 @@ function cargarReactivos(){
     renderReactivos();
   }
   servidor('getReactivos',[],function(res){
-    if(!res||!res.success){ toast('Error al cargar reactivos','err'); return; }
+    if(!res||!res.success){ mostrarErrorReactivos(res&&res.error?res.error:'El servidor no respondió'); return; }
     REACTIVOS_DATA={};
     REACTIVOS_DEF.forEach(function(d){
       REACTIVOS_DATA[d.clave]={clave:d.clave,lote:'',cantidad:null,base:'',historial:[]};
@@ -1505,7 +1505,17 @@ function cargarReactivos(){
       renderReactivos();
       actualizarBadgeReactivos();
     });
+  },function(e){
+    mostrarErrorReactivos(e&&e.message?e.message:String(e));
   });
+}
+
+function mostrarErrorReactivos(msg){
+  if(REACTIVOS_DATA) return; // ya hay datos en pantalla, basta con el aviso
+  document.getElementById('reac-lista').innerHTML=
+    '<div style="padding:1.25rem;font-size:12px;color:var(--fail);line-height:1.5">No se pudieron cargar los reactivos.<br>'+
+    '<span class="rd-mono" style="color:var(--sub);font-size:11px">'+escHtml(msg)+'</span><br>'+
+    '<button type="button" class="reac-btn" style="margin-top:10px" onclick="cargarReactivos()">Reintentar</button></div>';
 }
 
 // Si alguna cantidad se capturó hace más de 3 meses, trae esos meses para no contar de menos.
