@@ -12,6 +12,7 @@ function doGet() {
     .createHtmlOutputFromFile('Index')
     .setTitle('Lab — Registro de Muestras')
     .addMetaTag('viewport','width=device-width,initial-scale=1')
+    .setFaviconUrl('https://raw.githubusercontent.com/quantumstudiodata/registrodemuestras/master/apps-script-archive/favicon.png')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
